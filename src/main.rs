@@ -1,8 +1,7 @@
 mod options;
-
-use options::get_opts;
+mod sessions;
 
 fn main() {
-    let opts = get_opts();
+    let opts = options::Opts::get_opts();
     println!("{:?}", opts);
 }
