@@ -31,7 +31,7 @@ impl Default for Opts {
         w_names.push("".to_owned());
 
         Self {
-            session_name: Some("new_Session".to_owned()),
+            session_name: Some("new_session".to_owned()),
             path: Some("~".to_owned()),
             number_windows: Some(3),
             window_names: Some(w_names),
@@ -45,47 +45,45 @@ impl Opts {
         let options = Self::from_args();
 
         if let Opts {
-            session_name: Some(a),
-            path: Some(b),
-            number_windows: Some(c),
-            window_names: Some(d),
-            attach: Some(e),
+            session_name: Some(_a),
+            path: Some(_b),
+            number_windows: Some(_c),
+            window_names: Some(_d),
+            attach: Some(_e),
         } = options
         {
             Self::from_args()
         } else {
-            Self::replace_none(options)
-        }
-    }
+            let default_opts = Self::default();
 
-    fn replace_none(options: Self) -> Opts {
-        let session_name = match options.session_name {
-            Some(i) => Some(i),
-            None => Self::default().session_name,
-        };
-        let path = match options.path {
-            Some(i) => Some(i),
-            None => Self::default().session_name,
-        };
-        let number_windows = match options.number_windows {
-            Some(i) => Some(i),
-            None => Self::default().number_windows,
-        };
-        let window_names = match options.window_names {
-            Some(i) => Some(i),
-            None => Self::default().window_names,
-        };
-        let attach = match options.attach {
-            Some(i) => Some(i),
-            None => Self::default().attach,
-        };
+            let session_name = match options.session_name {
+                Some(i) => Some(i),
+                None => default_opts.session_name,
+            };
+            let path = match options.path {
+                Some(i) => Some(i),
+                None => default_opts.path,
+            };
+            let number_windows = match options.number_windows {
+                Some(i) => Some(i),
+                None => default_opts.number_windows,
+            };
+            let window_names = match options.window_names {
+                Some(i) => Some(i),
+                None => default_opts.window_names,
+            };
+            let attach = match options.attach {
+                Some(i) => Some(i),
+                None => default_opts.attach,
+            };
 
-        Opts {
-            session_name: session_name,
-            path: path,
-            number_windows: number_windows,
-            window_names: window_names,
-            attach: attach,
+            Opts {
+                session_name: session_name,
+                path: path,
+                number_windows: number_windows,
+                window_names: window_names,
+                attach: attach,
+            }
         }
     }
 }
