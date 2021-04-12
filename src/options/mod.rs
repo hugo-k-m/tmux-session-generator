@@ -4,7 +4,7 @@ use structopt::StructOpt;
 pub enum Opts {
     NewSession {
         /// Specify working directory for the session.
-        #[structopt(short = "c", long, default_value = "~")]
+        #[structopt(short, long, default_value = "~")]
         command: String,
 
         /// Don't attach new session to current terminal
@@ -24,11 +24,37 @@ pub enum Opts {
         target_session: Option<String>,
 
         /// Specify width
-        #[structopt(short)]
+        #[structopt(short, long)]
         x: Option<usize>,
 
         /// Specify height
-        #[structopt(short)]
+        #[structopt(short, long)]
         y: Option<usize>,
+    },
+
+    NewWindow {
+        /// insert new window at next free index from -t
+        #[structopt(short, long)]
+        a: bool,
+
+        /// Destroy it if the specified window exists
+        #[structopt(short, long)]
+        kill: bool,
+
+        /// Don't make the new window become the active one
+        #[structopt(short, long, default_value = "~")]
+        command: String,
+
+        /// Don't make the new window become the active one
+        #[structopt(short, long)]
+        detach: bool,
+
+        /// Specify a window name
+        #[structopt(short, long)]
+        name_window: Option<String>,
+
+        /// Specify target window
+        #[structopt(short, long)]
+        target_window: Option<String>,
     },
 }
