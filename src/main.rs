@@ -4,5 +4,5 @@ mod options;
 
 fn main() {
     let opts = options::Opts::from_args();
-    println!("{:?}", opts);
+    println!("{:?}", opts.generate_script());
 }

@@ -1,3 +1,7 @@
+mod sessions;
+
+use std::usize;
+
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -57,4 +61,52 @@ pub enum Opts {
         #[structopt(short, long)]
         target_window: Option<String>,
     },
+}
+
+impl Opts {
+    pub fn generate_script(self) -> Result<Self, Box<dyn std::error::Error>> {
+        match &self {
+            Opts::NewSession {
+                command,
+                detach,
+                name_window,
+                session_name,
+                target_session,
+                x,
+                y,
+            } => {
+                let content = Self::session_script_contents(
+                    command,
+                    detach,
+                    name_window,
+                    session_name,
+                    target_session,
+                    x,
+                    y,
+                );
+
+                Self::session_script(content)?;
+
+                Ok(self)
+            }
+
+            Opts::NewWindow {
+                a,
+
+                kill,
+
+                command,
+
+                detach,
+
+                name_window,
+
+                target_window,
+            } => {
+                // Self::generate_window_script()
+
+                Ok(self)
+            }
+        }
+    }
 }
