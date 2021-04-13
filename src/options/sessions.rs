@@ -22,8 +22,6 @@ impl Opts {
         x: &Option<usize>,
         y: &Option<usize>,
     ) -> String {
-        let mut content = "#!/bin/sh\n\n".to_owned();
-
         let det = if detach.to_owned() { "-d" } else { "" };
 
         let name_w = if let Some(nw) = name_window {
@@ -50,12 +48,17 @@ impl Opts {
             "".to_string()
         };
 
-        content.push_str(&format!("session='{:?}'\n", session_name));
-        content.push_str(&format!("session_path='{:?}'\n", command));
+        const SESSION_VAR: &str = "session";
+        const PATH_VAR: &str = "session_path";
+
+        let mut content = "#!/bin/sh\n\n".to_owned();
+
+        content.push_str(&format!("{}={:?}\n", SESSION_VAR, session_name));
+        content.push_str(&format!("{}={}\n", PATH_VAR, command));
 
         content.push_str(&format!(
             "tmux new-session {} -s ${} -c ${} {} {} {} {}",
-            det, session_name, command, name_w, target_s, width, height
+            det, SESSION_VAR, PATH_VAR, name_w, target_s, width, height
         ));
 
         content
