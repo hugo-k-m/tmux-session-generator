@@ -5,7 +5,7 @@ use super::Opts;
 
 impl Opts {
     pub(super) fn session_script(content: String) -> Result<(), Box<dyn std::error::Error>> {
-        let mut file = File::create("/tmp/session1")?;
+        let mut file = File::create("/tmp/session1.sh")?;
         file.write_all(content.as_bytes())?;
 
         Ok(())
