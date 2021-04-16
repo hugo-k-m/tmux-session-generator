@@ -22,8 +22,6 @@ impl Opts {
         x: &Option<usize>,
         y: &Option<usize>,
     ) -> String {
-        let det = if detach.to_owned() { "-d" } else { "" };
-
         let name_w = if let Some(nw) = name_window {
             format!("-n ${}", nw)
         } else {
@@ -57,9 +55,16 @@ impl Opts {
         content.push_str(&format!("{}={}\n", PATH_VAR, command));
 
         content.push_str(&format!(
-            "tmux new-session {} -s ${} -c ${} {} {} {} {}",
-            det, SESSION_VAR, PATH_VAR, name_w, target_s, width, height
+            "tmux new-session -s ${} -c ${} {} {} {} {}\n",
+            SESSION_VAR, PATH_VAR, name_w, target_s, width, height
         ));
+
+        if detach.to_owned() {
+            return content;
+        } else {
+            content.push_str("\n# Attach\n");
+            content.push_str(&format!("tmux attach -t ${}", SESSION_VAR));
+        };
 
         content
     }
