@@ -55,7 +55,7 @@ impl Opts {
         content.push_str(&format!("{}={}\n", PATH_VAR, command));
 
         content.push_str(&format!(
-            "tmux new-session -s ${} -c ${} {} {} {} {}\n",
+            "tmux new-session -d -s ${} -c ${} {} {} {} {}\n",
             SESSION_VAR, PATH_VAR, name_w, target_s, width, height
         ));
 
