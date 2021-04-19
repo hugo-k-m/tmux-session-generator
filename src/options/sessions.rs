@@ -1,11 +1,16 @@
-use std::fs::File;
+use std::fs;
 use std::io::Write;
 
 use super::Opts;
 
 impl Opts {
-    pub(super) fn session_script(content: String) -> Result<(), Box<dyn std::error::Error>> {
-        let mut file = File::create("/tmp/session1.sh")?;
+    pub(in crate::options) fn session_script(
+        content: String,
+        s_name: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        fs::create_dir(&format!("/tmp/{}", s_name))?;
+
+        let mut file = fs::File::create(&format!("/tmp/{}/{}.sh", s_name, s_name))?;
         file.write_all(content.as_bytes())?;
 
         Ok(())
@@ -13,7 +18,7 @@ impl Opts {
 }
 
 impl Opts {
-    pub(super) fn session_script_contents(
+    pub(in crate::options) fn session_script_content(
         command: &String,
         detach: &bool,
         name_window: &Option<String>,
