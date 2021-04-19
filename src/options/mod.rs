@@ -19,7 +19,7 @@ pub enum Opts {
         #[structopt(short, long)]
         name_window: Option<String>,
 
-        /// Name of the session
+        /// Name the session
         #[structopt(short, long, default_value = "new_session")]
         session_name: String,
 
@@ -37,7 +37,7 @@ pub enum Opts {
     },
 
     NewWindow {
-        /// insert new window at next free index from -t
+        /// Insert new window at next free index from -t
         #[structopt(short, long)]
         a: bool,
 
@@ -75,7 +75,7 @@ impl Opts {
                 x,
                 y,
             } => {
-                let content = Self::session_script_contents(
+                let content = Self::session_script_content(
                     command,
                     detach,
                     name_window,
@@ -85,28 +85,19 @@ impl Opts {
                     y,
                 );
 
-                Self::session_script(content)?;
+                Self::session_script(content, session_name)?;
 
                 Ok(self)
             }
 
             Opts::NewWindow {
                 a,
-
                 kill,
-
                 command,
-
                 detach,
-
                 name_window,
-
                 target_window,
-            } => {
-                // Self::generate_window_script()
-
-                Ok(self)
-            }
+            } => Ok(self),
         }
     }
 }
