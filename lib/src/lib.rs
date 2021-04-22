@@ -1,7 +1,10 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+#[macro_export]
+macro_rules! tmux_option {
+    ( $x:expr ) => {
+        if let Some(tmux_opt) = $x {
+            format!("-{} {}", stringify!($x), tmux_opt)
+        } else {
+            "".to_string()
+        }
+    };
 }

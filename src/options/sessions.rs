@@ -1,10 +1,11 @@
+use lib::{self, tmux_option};
 use std::fs;
 use std::io::Write;
 
 use super::Opts;
 
 impl Opts {
-    pub(in crate::options) fn session_script(
+    pub(in crate::options) fn create_session_script(
         content: String,
         s_name: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
@@ -21,35 +22,19 @@ impl Opts {
     pub(in crate::options) fn session_script_content(
         command: &String,
         detach: &bool,
-        name_window: &Option<String>,
+        n: &Option<String>,
         session_name: &String,
-        target_session: &Option<String>,
+        t: &Option<String>,
         x: &Option<usize>,
         y: &Option<usize>,
     ) -> String {
-        let name_w = if let Some(nw) = name_window {
-            format!("-n ${}", nw)
-        } else {
-            "".to_string()
-        };
+        let name_w = tmux_option!(n);
 
-        let target_s = if let Some(ts) = target_session {
-            format!("-t ${}", ts)
-        } else {
-            "".to_string()
-        };
+        let target_s = tmux_option!(t);
 
-        let width = if let Some(w) = x {
-            format!("-x ${}", w)
-        } else {
-            "".to_string()
-        };
+        let width = tmux_option!(x);
 
-        let height = if let Some(h) = y {
-            format!("-y ${}", h)
-        } else {
-            "".to_string()
-        };
+        let height = tmux_option!(y);
 
         const SESSION_VAR: &str = "session";
         const PATH_VAR: &str = "session_path";

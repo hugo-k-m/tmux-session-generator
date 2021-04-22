@@ -1,3 +1,4 @@
+mod manage;
 mod sessions;
 
 use std::usize;
@@ -64,7 +65,7 @@ pub enum Opts {
 }
 
 impl Opts {
-    pub fn generate_script(self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn invoke_subcommand(self) -> Result<Self, Box<dyn std::error::Error>> {
         match &self {
             Opts::NewSession {
                 command,
@@ -85,7 +86,7 @@ impl Opts {
                     y,
                 );
 
-                Self::session_script(content, session_name)?;
+                Self::create_session_script(content, session_name)?;
 
                 Ok(self)
             }
