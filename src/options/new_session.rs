@@ -16,9 +16,7 @@ impl Opts {
 
         Ok(())
     }
-}
 
-impl Opts {
     pub(in crate::options) fn session_script_content(
         command: &String,
         detach: &bool,

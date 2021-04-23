@@ -1,5 +1,6 @@
 mod manage;
-mod sessions;
+mod new_session;
+mod windows;
 
 use std::usize;
 
