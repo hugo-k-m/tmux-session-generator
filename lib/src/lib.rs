@@ -1,10 +1,12 @@
 #[macro_export]
 macro_rules! tmux_option {
-    ( $x:expr ) => {
-        if let Some(tmux_opt) = $x {
-            format!("-{} {}", stringify!($x), tmux_opt)
-        } else {
-            "".to_string()
-        }
+    ( $( $x:ident, $y:expr ) + ) => {
+        $(
+            let $x = if let Some(tmux_opt) = $y {
+                format!("-{} {}", stringify!($y), tmux_opt)
+            } else {
+                "".to_string()
+            };
+        ) +
     };
 }

@@ -28,13 +28,10 @@ impl Opts {
         x: &Option<usize>,
         y: &Option<usize>,
     ) -> String {
-        let name_w = tmux_option!(n);
-
-        let target_s = tmux_option!(t);
-
-        let width = tmux_option!(x);
-
-        let height = tmux_option!(y);
+        tmux_option!(name_w, n
+            target_s, t
+            width, x
+            height, y);
 
         const SESSION_VAR: &str = "session";
         const PATH_VAR: &str = "session_path";
