@@ -1,9 +1,7 @@
-mod manage;
 mod new_session;
-mod windows;
 
+use self::new_session::{create_session_script, session_script_content};
 use std::usize;
-
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -77,7 +75,7 @@ impl Opts {
                 x,
                 y,
             } => {
-                let content = Self::session_script_content(
+                let content = session_script_content(
                     command,
                     detach,
                     name_window,
@@ -87,7 +85,7 @@ impl Opts {
                     y,
                 );
 
-                Self::create_session_script(content, session_name)?;
+                create_session_script(content, session_name)?;
 
                 Ok(self)
             }
