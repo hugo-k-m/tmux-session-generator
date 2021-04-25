@@ -1,12 +1,5 @@
-#[macro_export]
-macro_rules! tmux_option {
-    ( $( $x:ident, $y:expr ) + ) => {
-        $(
-            let $x = if let Some(tmux_opt) = $y {
-                format!("-{} {}", stringify!($y), tmux_opt)
-            } else {
-                "".to_string()
-            };
-        ) +
-    };
-}
+//! Utilities for the options module
+
+pub mod err;
+pub mod macros;
+pub mod path;
