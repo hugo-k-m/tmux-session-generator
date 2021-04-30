@@ -12,3 +12,13 @@ impl Display for DirectoryError {
 }
 
 impl Error for DirectoryError {}
+
+#[cfg(test)]
+mod tests {
+    use crate::test::_produce_directory_error;
+
+    #[test]
+    fn produce_directory_error() {
+        _produce_directory_error();
+    }
+}

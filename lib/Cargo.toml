@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 directories = "3.0.1"
+tempfile = "3.2.0"
