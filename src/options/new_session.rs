@@ -2,20 +2,21 @@
 
 use lib::{
     self,
-    path::{home_dir, script_path, session_dir, tmuxsg_home_dir},
+    home_dirs::tmuxsg_home_dir,
+    path::{session_dir, session_script},
     tmux_option,
 };
-use std::fs;
 use std::io::Write;
+use std::{fs, path::PathBuf};
 
 pub(in crate::options) fn create_session_script(
     content: String,
     s_name: &str,
+    home_d: PathBuf,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let home_d = home_dir()?;
     let tmuxsg_home = tmuxsg_home_dir(home_d)?;
     let s_dir = session_dir(tmuxsg_home, s_name)?;
-    let script_path = script_path(s_dir, s_name)?;
+    let script_path = session_script(s_dir, s_name)?;
 
     let mut file = fs::File::create(script_path)?;
     file.write_all(content.as_bytes())?;

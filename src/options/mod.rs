@@ -1,7 +1,7 @@
 mod new_session;
 
 use self::new_session::{create_session_script, session_script_content};
-use std::usize;
+use std::{path::PathBuf, usize};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -64,7 +64,7 @@ pub enum Opts {
 }
 
 impl Opts {
-    pub fn invoke_subcommand(self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn invoke_subcommand(self, home_d: PathBuf) -> Result<Self, Box<dyn std::error::Error>> {
         match &self {
             Opts::NewSession {
                 command,
@@ -85,7 +85,7 @@ impl Opts {
                     y,
                 );
 
-                create_session_script(content, session_name)?;
+                create_session_script(content, session_name, home_d)?;
 
                 Ok(self)
             }

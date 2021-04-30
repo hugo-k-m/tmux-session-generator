@@ -1,4 +1,4 @@
-//! All macros for the crate
+//! All macros
 
 #[macro_export]
 macro_rules! tmux_option {
@@ -10,25 +10,5 @@ macro_rules! tmux_option {
                 "".to_string()
             };
         ) +
-    };
-}
-
-#[macro_export]
-macro_rules! create_dir {
-    ( $x:expr, $y:expr ) => {
-        if $x {
-            fs::create_dir($y)?;
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! create_file {
-    ( $x:expr, $y:expr ) => {
-        if $x {
-            fs::File::create($y)?;
-        } else {
-            return Err(Box::new(DirectoryError));
-        }
     };
 }
