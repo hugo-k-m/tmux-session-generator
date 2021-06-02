@@ -20,7 +20,9 @@ pub fn home_directory() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let base_d = match BaseDirs::new() {
         Some(bd) => bd,
         None => {
-            return Err(Box::new(DirectoryError));
+            let dir_err = DirectoryError("Home");
+
+            return Err(Box::new(dir_err));
         }
     };
 
@@ -40,7 +42,7 @@ mod tests {
     fn create_tmuxsg_home_directory_success() -> Result<(), Box<dyn std::error::Error>> {
         let tsg_test = CreationTest::setup()?;
         let home_d = tsg_test.path;
-        let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", &home_d.display()));
+        let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", home_d.display()));
         tmuxsg_home_dir(home_d)?;
 
         assert!(tsg_home_expected.is_dir());
@@ -51,7 +53,7 @@ mod tests {
     #[test]
     fn tsg_home_directory_found() -> Result<(), Box<dyn std::error::Error>> {
         let home_d = home_directory()?;
-        let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", &home_d.display()));
+        let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", home_d.display()));
 
         assert!(tsg_home_expected.is_dir());
 

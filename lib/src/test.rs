@@ -24,8 +24,10 @@ impl CreationTest {
 }
 
 /// Returns result used in directory error test
-pub fn _directory_error() -> Result<(), DirectoryError> {
-    Err(DirectoryError)
+pub fn _directory_error() -> Result<(), DirectoryError<'static>> {
+    let dir_err = DirectoryError("Test");
+
+    Err(dir_err)
 }
 
 /// Produces directory error

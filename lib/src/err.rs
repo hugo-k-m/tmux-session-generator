@@ -3,15 +3,15 @@
 use std::{error::Error, fmt::Display};
 
 #[derive(Debug, Clone)]
-pub struct DirectoryError;
+pub struct DirectoryError<'a>(pub &'a str);
 
-impl Display for DirectoryError {
+impl<'a> Display for DirectoryError<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "directory not found")
+        write!(f, "{} directory error", &self.0)
     }
 }
 
-impl Error for DirectoryError {}
+impl<'a> Error for DirectoryError<'a> {}
 
 #[cfg(test)]
 mod tests {
