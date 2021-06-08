@@ -1,10 +1,7 @@
-//! Helpers for tests
+//! Test helpers
 
 use std::path::PathBuf;
-
 use tempfile::TempDir;
-
-use crate::err::DirectoryError;
 
 pub struct CreationTest {
     pub path: PathBuf,
@@ -20,19 +17,5 @@ impl CreationTest {
             path: home_d,
             _tempdir: tempdir,
         })
-    }
-}
-
-/// Returns result used in directory error test
-pub fn _directory_error() -> Result<(), DirectoryError<'static>> {
-    let dir_err = DirectoryError("Test");
-
-    Err(dir_err)
-}
-
-/// Produces directory error
-pub fn _produce_directory_error() {
-    if let Err(e) = _directory_error() {
-        eprintln!("{}", e)
     }
 }

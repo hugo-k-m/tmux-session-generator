@@ -15,10 +15,13 @@ impl<'a> Error for DirectoryError<'a> {}
 
 #[cfg(test)]
 mod tests {
-    use crate::test::_produce_directory_error;
+    use super::*;
 
     #[test]
-    fn produce_directory_error() {
-        _produce_directory_error();
+    fn directory_error_displays_correctly() {
+        let actual_error_disp = format!("{}", DirectoryError("Test"));
+        let expected_error_disp = format!("Test directory error");
+
+        assert_eq!(actual_error_disp, expected_error_disp);
     }
 }

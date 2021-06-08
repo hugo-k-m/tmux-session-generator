@@ -1,14 +1,18 @@
+use directories::BaseDirs;
 use std::error::Error;
-
-use lib::home_dirs::home_directory;
 use structopt::StructOpt;
 
+use crate::home_dirs::{home_directory, tmuxsg_home_dir};
+
+mod home_dirs;
 mod options;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let opts = options::Opts::from_args();
-    let home_d = home_directory()?;
-    println!("{:?}", opts.invoke_subcommand(home_d));
+    let home_d = home_directory(BaseDirs::new())?;
+    let tmuxsg_home = tmuxsg_home_dir(home_d)?;
+
+    println!("{:?}", opts.invoke_subcommand(tmuxsg_home));
 
     Ok(())
 }
