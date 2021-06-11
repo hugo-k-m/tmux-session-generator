@@ -1,5 +1,7 @@
 //! Shared utilities for the options module (necessary?)
 
+use crate::err::ScriptError;
+
 use std::{
     fs::{self, File},
     path::PathBuf,
@@ -12,6 +14,13 @@ pub fn create_script(
     script_name: &str,
 ) -> Result<File, Box<dyn std::error::Error>> {
     let script_path = session_dir.join(&format!("{}.sh", script_name));
+
+    if script_path.is_file() {
+        let dir_err = ScriptError(format!("{}", script_name));
+
+        return Err(Box::new(dir_err));
+    }
+
     let file = fs::File::create(&script_path)?;
 
     Ok(file)
