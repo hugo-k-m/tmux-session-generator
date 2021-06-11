@@ -18,7 +18,7 @@ pub fn home_directory(base_dirs: Option<BaseDirs>) -> Result<PathBuf, Box<dyn st
     let base_d = match base_dirs {
         Some(bd) => bd,
         None => {
-            let dir_err = DirectoryError("Home");
+            let dir_err = DirectoryError("Home".to_owned());
 
             return Err(Box::new(dir_err));
         }

@@ -1,6 +1,7 @@
-//! Helpers for new-session subcommand
+//! NewSession subcommand helpers
 
-use lib::{self, tmux_option};
+use lib::options::create_script;
+use lib::tmux_option;
 use std::io::Write;
 use std::{fs, path::PathBuf};
 
@@ -10,9 +11,7 @@ pub(in crate::options) fn create_session_script(
     tmuxsg_home: PathBuf,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let s_dir = session_dir(tmuxsg_home, s_name)?;
-    let script_path = session_script(s_dir, s_name)?;
-
-    let mut file = fs::File::create(script_path)?;
+    let mut file = create_script(s_dir, s_name)?;
     file.write_all(content.as_bytes())?;
 
     Ok(())
@@ -27,10 +26,12 @@ pub(in crate::options) fn session_script_content(
     x: &Option<usize>,
     y: &Option<usize>,
 ) -> String {
-    tmux_option!(name_w, n
+    tmux_option!(
+        name_w, n
         target_s, t
         width, x
-        height, y);
+        height, y
+    );
 
     const SESSION_VAR: &str = "session";
     const PATH_VAR: &str = "session_path";
@@ -55,19 +56,10 @@ pub(in crate::options) fn session_script_content(
     content
 }
 
-// TODO: handle error with custom (script?) error
-pub fn session_script(s_dir: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let script_path = s_dir.join(&format!("{}.sh", s_name));
-
-    fs::File::create(&script_path)?;
-
-    Ok(script_path)
-}
-
 // TODO: Handle error with custom error
-pub fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
+/// Creates the session directory and returns its path.
+fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let s_dir = tsg_home.join(s_name);
-
     fs::create_dir(&s_dir)?;
 
     Ok(s_dir)
@@ -89,7 +81,7 @@ mod tests {
         const S_NAME: &str = "new_session";
         let s_dir = session_dir(tsg_home, S_NAME)?;
         let script_path_expected = PathBuf::from(&format!("{}/{}.sh", &s_dir.display(), S_NAME));
-        session_script(s_dir, S_NAME)?;
+        create_script(s_dir, S_NAME)?;
 
         assert!(script_path_expected.is_file());
 
