@@ -1,6 +1,10 @@
 //! NewWindow subcommand helpers
 
-use lib::{err::DirectoryError, options::create_script, tmux_bool_option, tmux_option};
+use lib::{
+    err::{DirectoryError, ScriptError},
+    options::create_script,
+    tmux_bool_option, tmux_option,
+};
 use std::{io::Write, path::PathBuf};
 
 pub(in crate::options) fn create_window_script(
@@ -12,25 +16,25 @@ pub(in crate::options) fn create_window_script(
     let window_name = content.2;
 
     let isolated_session_name = if session_name.contains(":") {
-        session_name.split(":").collect::<Vec<&str>>()[0].to_string()
+        session_name.split(":").collect::<Vec<&str>>()[0].to_owned()
     } else {
         session_name
     };
 
-    let s_dir = tmuxsg_home.join(&isolated_session_name);
+    let session_dir = tmuxsg_home.join(&isolated_session_name);
 
-    if !s_dir.is_dir() {
+    if !session_dir.is_dir() {
         let dir_err = DirectoryError(format!("{}", isolated_session_name));
 
         return Err(Box::new(dir_err));
     } else {
         let final_window_name = if window_name == "" {
-            "new_window".to_string()
+            "new_window".to_owned()
         } else {
             window_name
         };
 
-        let mut file = create_script(s_dir, &final_window_name)?;
+        let mut file = create_script(session_dir, &final_window_name)?;
         file.write_all(script_content.as_bytes())?;
     }
 
@@ -44,18 +48,16 @@ pub(in crate::options) fn window_script_content(
     d: &bool,
     n: &Option<String>,
     t: &Option<String>,
-) -> (String, String, String) {
-    tmux_option!(
-        name_w, n
-        target_window, t
-    );
+) -> Result<(String, String, String), Box<dyn std::error::Error>> {
+    let error = "Window content related".to_owned();
 
     let mut content = "#!/bin/sh\n\n".to_owned();
+    content.push_str(&format!("tmux new-window -c {}", command));
 
-    content.push_str(&format!(
-        "tmux new-window {} {} -c {}",
-        target_window, name_w, command
-    ));
+    tmux_option!(
+        n t,
+        content
+    );
 
     tmux_bool_option!(
         a, content
@@ -63,7 +65,21 @@ pub(in crate::options) fn window_script_content(
         k, content
     );
 
-    let session_name = target_window.replace("-t ", "");
+    let session_name = if let Some(target) = t {
+        target
+    } else {
+        let content_err = ScriptError(error);
 
-    (content, session_name, name_w)
+        return Err(Box::new(content_err));
+    };
+
+    let window_name = if let Some(target) = n {
+        target
+    } else {
+        let content_err = ScriptError(error);
+
+        return Err(Box::new(content_err));
+    };
+
+    Ok((content, session_name.to_owned(), window_name.to_owned()))
 }

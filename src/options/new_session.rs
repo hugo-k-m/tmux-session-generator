@@ -1,9 +1,7 @@
 //! NewSession subcommand helpers
 
-use lib::options::create_script;
-use lib::tmux_option;
-use std::io::Write;
-use std::{fs, path::PathBuf};
+use lib::{options::create_script, tmux_option};
+use std::{fs, io::Write, path::PathBuf};
 
 pub(in crate::options) fn create_session_script(
     content: String,
@@ -26,13 +24,6 @@ pub(in crate::options) fn session_script_content(
     x: &Option<usize>,
     y: &Option<usize>,
 ) -> String {
-    tmux_option!(
-        name_w, n
-        target_s, t
-        width, x
-        height, y
-    );
-
     const SESSION_VAR: &str = "session";
     const PATH_VAR: &str = "session_path";
 
@@ -42,21 +33,25 @@ pub(in crate::options) fn session_script_content(
     content.push_str(&format!("{}={}\n", PATH_VAR, command));
 
     content.push_str(&format!(
-        "tmux new-session -d -s ${} -c ${} {} {} {} {}\n",
-        SESSION_VAR, PATH_VAR, name_w, target_s, width, height
+        "tmux new-session -d -s ${} -c ${}",
+        SESSION_VAR, PATH_VAR
     ));
+
+    tmux_option!(
+        n t x y,
+        content
+    );
 
     if detach.to_owned() {
         return content;
     } else {
-        content.push_str("\n# Attach\n");
+        content.push_str("\n\n# Attach\n");
         content.push_str(&format!("tmux attach -t ${}", SESSION_VAR));
     };
 
     content
 }
 
-// TODO: Handle error with custom error
 /// Creates the session directory and returns its path.
 fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let s_dir = tsg_home.join(s_name);
@@ -65,13 +60,13 @@ fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::
     Ok(s_dir)
 }
 
-// TODO: test script and content creation
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::home_dirs::tmuxsg_home_dir;
-    use lib::test::CreationTest;
+    use crate::{home_dirs::tmuxsg_home_dir, options::Opts};
+    use lib::{err::ScriptError, test::CreationTest};
 
+    /// Test script creation process
     #[test]
     fn create_session_script_success() -> Result<(), Box<dyn std::error::Error>> {
         let tsg_test = CreationTest::setup()?;
@@ -99,6 +94,110 @@ mod tests {
         session_dir(tsg_home, "new_session")?;
 
         assert!(s_dir_expected.is_dir());
+
+        Ok(())
+    }
+
+    #[test]
+    fn check_session_script_content_detach() -> Result<(), Box<dyn std::error::Error>> {
+        let error = "Window content related".to_owned();
+
+        let test_command = "~".to_owned();
+        let test_session_name = "detach_test_session".to_owned();
+
+        let detach_test_session = Opts::NewSession {
+            command: test_command,
+            detach: true,
+            name_window: None,
+            session_name: test_session_name,
+            target_session: None,
+            x: None,
+            y: None,
+        };
+
+        let detach_test_session_content = if let Opts::NewSession {
+            command,
+            detach,
+            name_window,
+            session_name,
+            target_session,
+            x,
+            y,
+        } = detach_test_session
+        {
+            session_script_content(
+                &command,
+                &detach,
+                &name_window,
+                &session_name,
+                &target_session,
+                &x,
+                &y,
+            )
+        } else {
+            let content_err = ScriptError(error);
+
+            return Err(Box::new(content_err));
+        };
+
+        let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("resources/test/script_content_checks/session/detach_test_session.sh");
+
+        let expected_test_session_content = fs::read_to_string(test_content)?;
+
+        assert_eq!(detach_test_session_content, expected_test_session_content);
+
+        Ok(())
+    }
+
+    #[test]
+    fn check_session_script_content_attach() -> Result<(), Box<dyn std::error::Error>> {
+        let error = "Window content related".to_owned();
+
+        let test_command = "~".to_owned();
+        let test_session_name = "attach_test_session".to_owned();
+
+        let attach_test_session = Opts::NewSession {
+            command: test_command,
+            detach: false,
+            name_window: None,
+            session_name: test_session_name,
+            target_session: None,
+            x: None,
+            y: None,
+        };
+
+        let detach_test_session_content = if let Opts::NewSession {
+            command,
+            detach,
+            name_window,
+            session_name,
+            target_session,
+            x,
+            y,
+        } = attach_test_session
+        {
+            session_script_content(
+                &command,
+                &detach,
+                &name_window,
+                &session_name,
+                &target_session,
+                &x,
+                &y,
+            )
+        } else {
+            let content_err = ScriptError(error);
+
+            return Err(Box::new(content_err));
+        };
+
+        let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("resources/test/script_content_checks/session/attach_test_session.sh");
+
+        let expected_test_session_content = fs::read_to_string(test_content)?;
+
+        assert_eq!(detach_test_session_content, expected_test_session_content);
 
         Ok(())
     }

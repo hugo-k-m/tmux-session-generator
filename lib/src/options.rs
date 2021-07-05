@@ -1,7 +1,6 @@
-//! Shared utilities for the options module (necessary?)
+//! Shared utilities for the options module
 
 use crate::err::ScriptError;
-
 use std::{
     fs::{self, File},
     path::PathBuf,
@@ -22,18 +21,15 @@ pub fn create_script(
     }
 
     let file = fs::File::create(&script_path)?;
-
     Ok(file)
 }
 
 #[macro_export]
 macro_rules! tmux_option {
-    ( $( $x:ident, $y:expr ) + ) => {
+    ( $( $y:expr ) +, $content:ident ) => {
         $(
-            let $x = if let Some(tmux_opt) = $y {
-                format!("-{} {}", stringify!($y), tmux_opt)
-            } else {
-                "".to_string()
+            if let Some(tmux_opt) = $y {
+                $content.push_str(&format!("-{} {}", stringify!($y), tmux_opt));
             };
         ) +
     };

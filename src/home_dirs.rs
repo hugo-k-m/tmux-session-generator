@@ -29,11 +29,10 @@ pub fn home_directory(base_dirs: Option<BaseDirs>) -> Result<PathBuf, Box<dyn st
 
 #[cfg(test)]
 mod tests {
+    use crate::home_dirs::{home_directory, tmuxsg_home_dir};
     use directories::BaseDirs;
     use lib::test::CreationTest;
     use std::path::PathBuf;
-
-    use crate::home_dirs::{home_directory, tmuxsg_home_dir};
 
     #[test]
     fn create_tmuxsg_home_directory_success() -> Result<(), Box<dyn std::error::Error>> {
@@ -47,6 +46,7 @@ mod tests {
         Ok(())
     }
 
+    // TODO: rewrite as integration test
     #[test]
     fn tsg_home_directory_found() -> Result<(), Box<dyn std::error::Error>> {
         let home_d = home_directory(BaseDirs::new())?;
@@ -57,6 +57,7 @@ mod tests {
         Ok(())
     }
 
+    // TODO: rewrite as integration test
     #[test]
     fn home_directory_found() -> Result<(), Box<dyn std::error::Error>> {
         let home_d = home_directory(BaseDirs::new())?;

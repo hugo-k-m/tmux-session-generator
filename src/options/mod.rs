@@ -2,11 +2,9 @@ mod new_session;
 mod new_window;
 
 use new_session::{create_session_script, session_script_content};
-use new_window::window_script_content;
+use new_window::{create_window_script, window_script_content};
 use std::{path::PathBuf, usize};
 use structopt::StructOpt;
-
-use new_window::create_window_script;
 
 #[derive(Debug, StructOpt)]
 pub enum Opts {
@@ -106,7 +104,7 @@ impl Opts {
                 target_window,
             } => {
                 let content =
-                    window_script_content(a, kill, command, detach, name_window, target_window);
+                    window_script_content(a, kill, command, detach, name_window, target_window)?;
 
                 create_window_script(content, tmuxsg_home)?;
 
