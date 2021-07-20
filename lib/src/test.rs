@@ -1,21 +1,21 @@
 //! Test helpers
 
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 use tempfile::TempDir;
 
-pub struct CreationTest {
-    pub path: PathBuf,
-    _tempdir: TempDir,
+pub struct HomeTestObjects {
+    pub test_home_path: PathBuf,
+    _test_home_dir: TempDir,
 }
 
-impl CreationTest {
+impl HomeTestObjects {
     pub fn setup() -> Result<Self, Box<dyn std::error::Error>> {
-        let tempdir = tempfile::tempdir()?;
-        let home_d = PathBuf::from(&tempdir.path());
+        let test_home_dir = tempfile::tempdir()?;
+        let test_home_dir_path = PathBuf::from(&test_home_dir.path());
 
-        Ok(CreationTest {
-            path: home_d,
-            _tempdir: tempdir,
+        Ok(HomeTestObjects {
+            test_home_path: test_home_dir_path,
+            _test_home_dir: test_home_dir,
         })
     }
 }
