@@ -63,20 +63,23 @@ fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{home_dirs::tmuxsg_home_dir, options::Opts};
-    use lib::{err::ScriptError, test::CreationTest};
+    use crate::options::Opts;
+    use lib::{err::ScriptError, produce_script_error, test::SessionTestObjects};
 
-    /// Test script creation process
+    /// Test session script creation process
     #[test]
     fn create_session_script_success() -> Result<(), Box<dyn std::error::Error>> {
-        let tsg_test = CreationTest::setup()?;
-        let home_d = tsg_test.path;
-        let tsg_home = tmuxsg_home_dir(home_d)?;
+        const SESSION_NAME: &str = "new_session";
+        let content = "test content".to_owned();
 
-        const S_NAME: &str = "new_session";
-        let s_dir = session_dir(tsg_home, S_NAME)?;
-        let script_path_expected = PathBuf::from(&format!("{}/{}.sh", &s_dir.display(), S_NAME));
-        create_script(s_dir, S_NAME)?;
+        let tsg_test = SessionTestObjects::setup()?;
+        let tsg_home_dir = tsg_test.test_tmuxsg_path;
+        let session_dir = PathBuf::from(&format!("{}/{}", tsg_home_dir.display(), SESSION_NAME));
+
+        let script_path_expected =
+            PathBuf::from(&format!("{}/{}.sh", session_dir.display(), SESSION_NAME));
+
+        create_session_script(content, SESSION_NAME, tsg_home_dir)?;
 
         assert!(script_path_expected.is_file());
 
@@ -85,13 +88,18 @@ mod tests {
 
     #[test]
     fn create_session_directory_success() -> Result<(), Box<dyn std::error::Error>> {
-        let tsg_test = CreationTest::setup()?;
-        let home_d = tsg_test.path;
-        let tsg_home = tmuxsg_home_dir(home_d)?;
+        const SESSION_NAME: &str = "new_session";
 
-        const S_NAME: &str = "new_session";
-        let s_dir_expected = PathBuf::from(&format!("{}/{}", &tsg_home.display(), S_NAME));
-        session_dir(tsg_home, "new_session")?;
+        let tsg_test = SessionTestObjects::setup()?;
+        let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
+
+        let s_dir_expected = PathBuf::from(&format!(
+            "{}/{}",
+            &tsg_home_dir_path.display(),
+            SESSION_NAME
+        ));
+
+        session_dir(tsg_home_dir_path, SESSION_NAME)?;
 
         assert!(s_dir_expected.is_dir());
 
@@ -101,7 +109,6 @@ mod tests {
     #[test]
     fn check_session_script_content_detach() -> Result<(), Box<dyn std::error::Error>> {
         let error = "Window content related".to_owned();
-
         let test_command = "~".to_owned();
         let test_session_name = "detach_test_session".to_owned();
 
@@ -135,9 +142,7 @@ mod tests {
                 &y,
             )
         } else {
-            let content_err = ScriptError(error);
-
-            return Err(Box::new(content_err));
+            produce_script_error!(error);
         };
 
         let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -187,9 +192,7 @@ mod tests {
                 &y,
             )
         } else {
-            let content_err = ScriptError(error);
-
-            return Err(Box::new(content_err));
+            produce_script_error!(error);
         };
 
         let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -201,4 +204,7 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn session_script_content_checks() {}
 }

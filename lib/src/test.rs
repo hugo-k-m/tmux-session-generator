@@ -19,3 +19,22 @@ impl HomeTestObjects {
         })
     }
 }
+
+pub struct SessionTestObjects {
+    pub test_tmuxsg_path: PathBuf,
+    _test_home_dir: TempDir,
+}
+
+impl SessionTestObjects {
+    pub fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+        let test_home_dir = tempfile::tempdir()?;
+        let test_home_dir_path = PathBuf::from(&test_home_dir.path());
+        let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");
+        fs::create_dir(&test_tmuxsg_path)?;
+
+        Ok(SessionTestObjects {
+            test_tmuxsg_path: test_tmuxsg_path,
+            _test_home_dir: test_home_dir,
+        })
+    }
+}

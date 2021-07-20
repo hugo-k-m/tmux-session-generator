@@ -13,6 +13,15 @@ impl Display for DirectoryError {
 
 impl Error for DirectoryError {}
 
+#[macro_export]
+macro_rules! produce_directory_error {
+    ($err_details:expr) => {
+        let dir_err = DirectoryError($err_details);
+
+        return Err(Box::new(dir_err));
+    };
+}
+
 #[derive(Debug, Clone)]
 pub struct ScriptError(pub String);
 
@@ -23,6 +32,15 @@ impl Display for ScriptError {
 }
 
 impl Error for ScriptError {}
+
+#[macro_export]
+macro_rules! produce_script_error {
+    ($err_details:expr) => {
+        let script_err = ScriptError($err_details);
+
+        return Err(Box::new(script_err));
+    };
+}
 
 #[cfg(test)]
 mod tests {
