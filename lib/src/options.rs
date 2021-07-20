@@ -1,12 +1,11 @@
 //! Shared utilities for the options module
 
-use crate::err::ScriptError;
+use crate::{err::ScriptError, produce_script_error};
 use std::{
     fs::{self, File},
     path::PathBuf,
 };
 
-// TODO: handle error with custom (script?) error
 /// Creates the script and opens it in write-only mode.
 pub fn create_script(
     session_dir: PathBuf,
@@ -15,12 +14,11 @@ pub fn create_script(
     let script_path = session_dir.join(&format!("{}.sh", script_name));
 
     if script_path.is_file() {
-        let dir_err = ScriptError(format!("{}", script_name));
-
-        return Err(Box::new(dir_err));
+        produce_script_error!(format!("{}", script_name));
     }
 
     let file = fs::File::create(&script_path)?;
+
     Ok(file)
 }
 
@@ -44,4 +42,31 @@ macro_rules! tmux_bool_option {
             }
         ) +
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{options::create_script, test::SessionTestObjects};
+    use std::{fs, path::PathBuf};
+
+    /// Test script creation process
+    #[test]
+    fn create_script_success() -> Result<(), Box<dyn std::error::Error>> {
+        const SESSION_NAME: &str = "new_session";
+
+        let tsg_test = SessionTestObjects::setup()?;
+        let tsg_dir = tsg_test.test_tmuxsg_path;
+
+        let session_dir = PathBuf::from(&format!("{}/{}", tsg_dir.display(), SESSION_NAME));
+        fs::create_dir(&session_dir)?;
+
+        let script_path_expected =
+            PathBuf::from(&format!("{}/{}.sh", session_dir.display(), SESSION_NAME));
+
+        create_script(session_dir, SESSION_NAME)?;
+
+        assert!(script_path_expected.is_file());
+
+        Ok(())
+    }
 }
