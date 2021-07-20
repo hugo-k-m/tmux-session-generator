@@ -3,7 +3,7 @@
 use lib::{
     err::{DirectoryError, ScriptError},
     options::create_script,
-    tmux_bool_option, tmux_option,
+    produce_directory_error, produce_script_error, tmux_bool_option, tmux_option,
 };
 use std::{io::Write, path::PathBuf};
 
@@ -24,17 +24,9 @@ pub(in crate::options) fn create_window_script(
     let session_dir = tmuxsg_home.join(&isolated_session_name);
 
     if !session_dir.is_dir() {
-        let dir_err = DirectoryError(format!("{}", isolated_session_name));
-
-        return Err(Box::new(dir_err));
+        produce_directory_error!(format!("{}", isolated_session_name));
     } else {
-        let final_window_name = if window_name == "" {
-            "new_window".to_owned()
-        } else {
-            window_name
-        };
-
-        let mut file = create_script(session_dir, &final_window_name)?;
+        let mut file = create_script(session_dir, &window_name)?;
         file.write_all(script_content.as_bytes())?;
     }
 
@@ -51,6 +43,18 @@ pub(in crate::options) fn window_script_content(
 ) -> Result<(String, String, String), Box<dyn std::error::Error>> {
     let error = "Window content related".to_owned();
 
+    let session_name = if let Some(target) = t {
+        target
+    } else {
+        produce_script_error!(error);
+    };
+
+    let window_name = if let Some(name) = n {
+        name
+    } else {
+        "new_window"
+    };
+
     let mut content = "#!/bin/sh\n\n".to_owned();
     content.push_str(&format!("tmux new-window -c {}", command));
 
@@ -65,21 +69,39 @@ pub(in crate::options) fn window_script_content(
         k, content
     );
 
-    let session_name = if let Some(target) = t {
-        target
-    } else {
-        let content_err = ScriptError(error);
-
-        return Err(Box::new(content_err));
-    };
-
-    let window_name = if let Some(target) = n {
-        target
-    } else {
-        let content_err = ScriptError(error);
-
-        return Err(Box::new(content_err));
-    };
-
     Ok((content, session_name.to_owned(), window_name.to_owned()))
+}
+
+// TODO: write tests
+#[cfg(test)]
+mod tests {
+    use lib::test::WindowTestObjects;
+    use std::path::PathBuf;
+
+    use crate::options::new_window::create_window_script;
+
+    #[test]
+    fn create_window_script_success() -> Result<(), Box<dyn std::error::Error>> {
+        const SESSION_NAME: &str = "test_session";
+        const WINDOW_NAME: &str = "test_window";
+
+        let content = (
+            "test content".to_owned(),
+            SESSION_NAME.to_owned(),
+            WINDOW_NAME.to_owned(),
+        );
+
+        let tsg_test = WindowTestObjects::setup()?;
+        let tmuxsg_home = tsg_test.test_tmuxsg_path;
+        let session_dir = tsg_test.test_session_path;
+
+        let script_path_expected =
+            PathBuf::from(&format!("{}/{}.sh", session_dir.display(), WINDOW_NAME));
+
+        create_window_script(content, tmuxsg_home)?;
+
+        assert!(script_path_expected.is_file());
+
+        Ok(())
+    }
 }
