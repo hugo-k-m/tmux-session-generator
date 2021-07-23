@@ -82,12 +82,11 @@ mod tests {
 
     #[test]
     fn create_window_script_success() -> Result<(), Box<dyn std::error::Error>> {
-        const SESSION_NAME: &str = "test_session";
         const WINDOW_NAME: &str = "test_window";
 
         let content = (
             "test content".to_owned(),
-            SESSION_NAME.to_owned(),
+            "test_session".to_owned(),
             WINDOW_NAME.to_owned(),
         );
 
