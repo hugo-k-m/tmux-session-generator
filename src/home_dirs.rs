@@ -32,7 +32,7 @@ pub fn home_directory(base_dirs: Option<BaseDirs>) -> Result<PathBuf, Box<dyn st
 mod tests {
     use crate::home_dirs::{home_directory, tmuxsg_home_dir};
     use directories::BaseDirs;
-    use lib::test::HomeTestObjects;
+    use lib::test::{HomeTestObjects, TestObject};
     use std::path::PathBuf;
 
     #[test]

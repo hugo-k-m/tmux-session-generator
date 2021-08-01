@@ -3,13 +3,19 @@
 use std::{fs, path::PathBuf};
 use tempfile::TempDir;
 
+pub trait TestObject {
+    fn setup() -> Result<Self, Box<dyn std::error::Error>>
+    where
+        Self: Sized;
+}
+
 pub struct HomeTestObjects {
     pub test_home_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl HomeTestObjects {
-    pub fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+impl TestObject for HomeTestObjects {
+    fn setup() -> Result<Self, Box<dyn std::error::Error>> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_path = PathBuf::from(&test_home_dir.path());
 
@@ -25,8 +31,8 @@ pub struct SessionTestObjects {
     _test_home_dir: TempDir,
 }
 
-impl SessionTestObjects {
-    pub fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+impl TestObject for SessionTestObjects {
+    fn setup() -> Result<Self, Box<dyn std::error::Error>> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");
@@ -46,8 +52,8 @@ pub struct WindowTestObjects {
     _test_home_dir: TempDir,
 }
 
-impl WindowTestObjects {
-    pub fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+impl TestObject for WindowTestObjects {
+    fn setup() -> Result<Self, Box<dyn std::error::Error>> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");

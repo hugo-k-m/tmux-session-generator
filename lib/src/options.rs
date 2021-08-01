@@ -46,7 +46,10 @@ macro_rules! tmux_bool_option {
 
 #[cfg(test)]
 mod tests {
-    use crate::{options::create_script, test::SessionTestObjects};
+    use crate::{
+        options::create_script,
+        test::{SessionTestObjects, TestObject},
+    };
     use std::{fs, path::PathBuf};
 
     /// Test script creation process

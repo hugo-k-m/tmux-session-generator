@@ -75,7 +75,7 @@ pub(in crate::options) fn window_script_content(
 // TODO: write tests
 #[cfg(test)]
 mod tests {
-    use lib::test::WindowTestObjects;
+    use lib::test::{TestObject, WindowTestObjects};
     use std::path::PathBuf;
 
     use crate::options::new_window::create_window_script;

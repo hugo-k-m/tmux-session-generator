@@ -1,4 +1,4 @@
-//! Utilities for the options module
+//! Shared utilities
 
 pub mod err;
 pub mod options;

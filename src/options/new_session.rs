@@ -64,7 +64,11 @@ fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::
 mod tests {
     use super::*;
     use crate::options::Opts;
-    use lib::{err::ScriptError, produce_script_error, test::SessionTestObjects};
+    use lib::{
+        err::ScriptError,
+        produce_script_error,
+        test::{SessionTestObjects, TestObject},
+    };
 
     /// Test session script creation process
     #[test]
