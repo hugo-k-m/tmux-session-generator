@@ -48,7 +48,7 @@ macro_rules! tmux_bool_option {
 mod tests {
     use crate::{
         options::create_script,
-        test::{SessionTestObjects, TestObject},
+        test::{SessionTestObject, TestObject},
     };
     use std::{fs, path::PathBuf};
 
@@ -57,7 +57,7 @@ mod tests {
     fn create_script_success() -> Result<(), Box<dyn std::error::Error>> {
         const SESSION_NAME: &str = "new_session";
 
-        let tsg_test = SessionTestObjects::setup()?;
+        let tsg_test = SessionTestObject::setup()?;
         let tsg_dir = tsg_test.test_tmuxsg_path;
 
         let session_dir = PathBuf::from(&format!("{}/{}", tsg_dir.display(), SESSION_NAME));

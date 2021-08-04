@@ -67,7 +67,7 @@ mod tests {
     use lib::{
         err::ScriptError,
         produce_script_error,
-        test::{SessionTestObjects, TestObject},
+        test::{SessionTestObject, TestObject},
     };
 
     /// Test session script creation process
@@ -76,7 +76,7 @@ mod tests {
         const SESSION_NAME: &str = "new_session";
         let content = "test content".to_owned();
 
-        let tsg_test = SessionTestObjects::setup()?;
+        let tsg_test = SessionTestObject::setup()?;
         let tsg_home_dir = tsg_test.test_tmuxsg_path;
         let session_dir = PathBuf::from(&format!("{}/{}", tsg_home_dir.display(), SESSION_NAME));
 
@@ -94,7 +94,7 @@ mod tests {
     fn create_session_directory_success() -> Result<(), Box<dyn std::error::Error>> {
         const SESSION_NAME: &str = "new_session";
 
-        let tsg_test = SessionTestObjects::setup()?;
+        let tsg_test = SessionTestObject::setup()?;
         let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
 
         let s_dir_expected = PathBuf::from(&format!(

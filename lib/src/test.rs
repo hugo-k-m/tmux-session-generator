@@ -9,29 +9,29 @@ pub trait TestObject {
         Self: Sized;
 }
 
-pub struct HomeTestObjects {
+pub struct HomeTestObject {
     pub test_home_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl TestObject for HomeTestObjects {
+impl TestObject for HomeTestObject {
     fn setup() -> Result<Self, Box<dyn std::error::Error>> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_path = PathBuf::from(&test_home_dir.path());
 
-        Ok(HomeTestObjects {
+        Ok(HomeTestObject {
             test_home_path,
             _test_home_dir: test_home_dir,
         })
     }
 }
 
-pub struct SessionTestObjects {
+pub struct SessionTestObject {
     pub test_tmuxsg_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl TestObject for SessionTestObjects {
+impl TestObject for SessionTestObject {
     fn setup() -> Result<Self, Box<dyn std::error::Error>> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
@@ -39,20 +39,20 @@ impl TestObject for SessionTestObjects {
 
         fs::create_dir(&test_tmuxsg_path)?;
 
-        Ok(SessionTestObjects {
+        Ok(SessionTestObject {
             test_tmuxsg_path,
             _test_home_dir: test_home_dir,
         })
     }
 }
 
-pub struct WindowTestObjects {
+pub struct WindowTestObject {
     pub test_tmuxsg_path: PathBuf,
     pub test_session_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl TestObject for WindowTestObjects {
+impl TestObject for WindowTestObject {
     fn setup() -> Result<Self, Box<dyn std::error::Error>> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
@@ -64,7 +64,7 @@ impl TestObject for WindowTestObjects {
         fs::create_dir(&test_session_path)?;
         fs::File::create(script_path)?;
 
-        Ok(WindowTestObjects {
+        Ok(WindowTestObject {
             test_tmuxsg_path,
             test_session_path,
             _test_home_dir: test_home_dir,

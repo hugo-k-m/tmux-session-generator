@@ -32,12 +32,12 @@ pub fn home_directory(base_dirs: Option<BaseDirs>) -> Result<PathBuf, Box<dyn st
 mod tests {
     use crate::home_dirs::{home_directory, tmuxsg_home_dir};
     use directories::BaseDirs;
-    use lib::test::{HomeTestObjects, TestObject};
+    use lib::test::{HomeTestObject, TestObject};
     use std::path::PathBuf;
 
     #[test]
     fn create_tmuxsg_home_directory_success() -> Result<(), Box<dyn std::error::Error>> {
-        let tsg_test = HomeTestObjects::setup()?;
+        let tsg_test = HomeTestObject::setup()?;
         let home_d = tsg_test.test_home_path;
         let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", home_d.display()));
         tmuxsg_home_dir(home_d)?;
