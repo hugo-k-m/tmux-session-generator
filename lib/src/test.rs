@@ -28,6 +28,7 @@ impl TestObject for HomeTestObject {
 
 pub struct SessionTestObject {
     pub test_tmuxsg_path: PathBuf,
+    pub test_home_dir_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
@@ -41,6 +42,7 @@ impl TestObject for SessionTestObject {
 
         Ok(SessionTestObject {
             test_tmuxsg_path,
+            test_home_dir_path,
             _test_home_dir: test_home_dir,
         })
     }
