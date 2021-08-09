@@ -70,7 +70,7 @@ mod tests {
         test::{SessionTestObject, TestObject},
     };
 
-    /// Test session script creation process
+    /// Test session script creation process.
     #[test]
     fn create_session_script_success() -> Result<(), Box<dyn std::error::Error>> {
         const SESSION_NAME: &str = "new_session";
@@ -111,22 +111,60 @@ mod tests {
     }
 
     #[test]
-    fn check_session_script_content_detach() -> Result<(), Box<dyn std::error::Error>> {
-        let error = "Window content related".to_owned();
+    fn session_script_content_attach_test() -> Result<(), Box<dyn std::error::Error>> {
+        let test_command = "~".to_owned();
+        let test_session_name = "attach_test_session".to_owned();
+
+        let attach_test_session_content =
+            test_session_content(test_command, false, test_session_name)?;
+
+        let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("resources/test/script_content_checks/session/attach_test_session.sh");
+
+        let expected_test_session_content = fs::read_to_string(test_content)?;
+
+        assert_eq!(attach_test_session_content, expected_test_session_content);
+
+        Ok(())
+    }
+
+    #[test]
+    fn session_script_content_detach_test() -> Result<(), Box<dyn std::error::Error>> {
         let test_command = "~".to_owned();
         let test_session_name = "detach_test_session".to_owned();
 
+        let detach_test_session_content =
+            test_session_content(test_command, true, test_session_name)?;
+
+        let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("resources/test/script_content_checks/session/detach_test_session.sh");
+
+        let expected_test_session_content = fs::read_to_string(test_content)?;
+
+        assert_eq!(detach_test_session_content, expected_test_session_content);
+
+        Ok(())
+    }
+
+    /// Test helper function that returns the test session script content
+    fn test_session_content(
+        command: String,
+        detach: bool,
+        session_name: String,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        let error = "Session content related".to_owned();
+
         let detach_test_session = Opts::NewSession {
-            command: test_command,
-            detach: true,
+            command,
+            detach,
             name_window: None,
-            session_name: test_session_name,
+            session_name,
             target_session: None,
             x: None,
             y: None,
         };
 
-        let detach_test_session_content = if let Opts::NewSession {
+        let test_session_content = if let Opts::NewSession {
             command,
             detach,
             name_window,
@@ -149,66 +187,6 @@ mod tests {
             produce_script_error!(error);
         };
 
-        let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("resources/test/script_content_checks/session/detach_test_session.sh");
-
-        let expected_test_session_content = fs::read_to_string(test_content)?;
-
-        assert_eq!(detach_test_session_content, expected_test_session_content);
-
-        Ok(())
+        Ok(test_session_content)
     }
-
-    #[test]
-    fn check_session_script_content_attach() -> Result<(), Box<dyn std::error::Error>> {
-        let error = "Window content related".to_owned();
-
-        let test_command = "~".to_owned();
-        let test_session_name = "attach_test_session".to_owned();
-
-        let attach_test_session = Opts::NewSession {
-            command: test_command,
-            detach: false,
-            name_window: None,
-            session_name: test_session_name,
-            target_session: None,
-            x: None,
-            y: None,
-        };
-
-        let detach_test_session_content = if let Opts::NewSession {
-            command,
-            detach,
-            name_window,
-            session_name,
-            target_session,
-            x,
-            y,
-        } = attach_test_session
-        {
-            session_script_content(
-                &command,
-                &detach,
-                &name_window,
-                &session_name,
-                &target_session,
-                &x,
-                &y,
-            )
-        } else {
-            produce_script_error!(error);
-        };
-
-        let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("resources/test/script_content_checks/session/attach_test_session.sh");
-
-        let expected_test_session_content = fs::read_to_string(test_content)?;
-
-        assert_eq!(detach_test_session_content, expected_test_session_content);
-
-        Ok(())
-    }
-
-    #[test]
-    fn session_script_content_checks() {}
 }
