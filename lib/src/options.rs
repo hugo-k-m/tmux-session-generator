@@ -27,7 +27,7 @@ macro_rules! tmux_option {
     ( $( $y:expr ) +, $content:ident ) => {
         $(
             if let Some(tmux_opt) = $y {
-                $content.push_str(&format!("-{} {}", stringify!($y), tmux_opt));
+                $content.push_str(&format!(" -{} {}", stringify!($y), tmux_opt));
             };
         ) +
     };
