@@ -8,5 +8,5 @@ edition = "2018"
 
 [dependencies]
 directories = "3.0.2"
-structopt = "0.3.22"
+structopt = "0.3.23"
 lib = {path="lib"}
