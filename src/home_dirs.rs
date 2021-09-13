@@ -1,15 +1,11 @@
 //! Handle home directories
 
 use directories::BaseDirs;
-use lib::{err::DirectoryError, produce_directory_error};
-use std::{fs, path::PathBuf};
+use lib::{dir::create_dir, err::DirectoryError, produce_directory_error};
+use std::path::PathBuf;
 
 pub fn tmuxsg_home_dir(home_d: PathBuf) -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let tsg_home = home_d.join(".tmuxsg");
-
-    if !tsg_home.is_dir() {
-        fs::create_dir(&tsg_home)?;
-    }
+    let tsg_home = create_dir(home_d, ".tmuxsg".to_owned())?;
 
     Ok(tsg_home)
 }
