@@ -1,14 +1,14 @@
 //! NewSession subcommand helpers
 
-use lib::{options::create_script, tmux_option};
-use std::{fs, io::Write, path::PathBuf};
+use lib::{dir::create_dir, options::create_script, tmux_option};
+use std::{io::Write, path::PathBuf};
 
 pub(in crate::options) fn create_session_script(
     content: String,
     s_name: &str,
     tmuxsg_home: PathBuf,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let s_dir = session_dir(tmuxsg_home, s_name)?;
+    let s_dir = create_dir(tmuxsg_home, s_name.to_owned())?;
     let mut file = create_script(s_dir, s_name)?;
     file.write_all(content.as_bytes())?;
 
@@ -52,23 +52,17 @@ pub(in crate::options) fn session_script_content(
     content
 }
 
-/// Creates the session directory and returns its path.
-fn session_dir(tsg_home: PathBuf, s_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let s_dir = tsg_home.join(s_name);
-    fs::create_dir(&s_dir)?;
-
-    Ok(s_dir)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::options::Opts;
     use lib::{
+        dir::create_dir,
         err::ScriptError,
         produce_script_error,
-        test::{SessionTestObject, TestObject},
+        test::{SessionTestObject, TestObject, WindowTestObject},
     };
+    use std::fs;
 
     /// Test session script creation process.
     #[test]
@@ -92,7 +86,7 @@ mod tests {
 
     #[test]
     fn create_session_directory_success() -> Result<(), Box<dyn std::error::Error>> {
-        const SESSION_NAME: &str = "new_session";
+        let session_name = "new_session".to_owned();
 
         let tsg_test = SessionTestObject::setup()?;
         let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
@@ -100,12 +94,30 @@ mod tests {
         let s_dir_expected = PathBuf::from(&format!(
             "{}/{}",
             &tsg_home_dir_path.display(),
-            SESSION_NAME
+            session_name
         ));
 
-        session_dir(tsg_home_dir_path, SESSION_NAME)?;
+        create_dir(tsg_home_dir_path, session_name)?;
 
         assert!(s_dir_expected.is_dir());
+
+        Ok(())
+    }
+
+    #[test]
+    fn session_directory_already_exists() -> Result<(), Box<dyn std::error::Error>> {
+        let session_name = "test_session".to_owned();
+
+        let tsg_test = WindowTestObject::setup()?;
+        let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
+
+        let s_dir_expected = PathBuf::from(&format!(
+            "{}/{}",
+            &tsg_home_dir_path.display(),
+            session_name
+        ));
+
+        assert!(create_dir(tsg_home_dir_path, session_name).is_err());
 
         Ok(())
     }
