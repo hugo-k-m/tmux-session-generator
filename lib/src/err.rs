@@ -7,7 +7,7 @@ pub struct DirectoryError(pub String);
 
 impl Display for DirectoryError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} directory error", &self.0)
+        write!(f, "Directory error: {}", &self.0)
     }
 }
 
@@ -27,7 +27,7 @@ pub struct ScriptError(pub String);
 
 impl Display for ScriptError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} script error", &self.0)
+        write!(f, "Script error: {}", &self.0)
     }
 }
 
