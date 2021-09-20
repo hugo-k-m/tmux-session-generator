@@ -1,16 +1,16 @@
 //! Shared utilities for the options module
 
-use crate::{err::ScriptError, produce_script_error};
+use crate::{
+    err::{CustomResult, ScriptError},
+    produce_script_error,
+};
 use std::{
     fs::{self, File},
     path::PathBuf,
 };
 
 /// Creates the script and opens it in write-only mode.
-pub fn create_script(
-    session_dir: PathBuf,
-    script_name: &str,
-) -> Result<File, Box<dyn std::error::Error>> {
+pub fn create_script(session_dir: PathBuf, script_name: &str) -> CustomResult<File> {
     let script_path = session_dir.join(&format!("{}.sh", script_name));
 
     if script_path.is_file() {
@@ -47,6 +47,7 @@ macro_rules! tmux_bool_option {
 #[cfg(test)]
 mod tests {
     use crate::{
+        err::CustomResult,
         options::create_script,
         test::{SessionTestObject, TestObject},
     };
@@ -54,7 +55,7 @@ mod tests {
 
     /// Test script creation process
     #[test]
-    fn create_script_success() -> Result<(), Box<dyn std::error::Error>> {
+    fn create_script_success() -> CustomResult<()> {
         const SESSION_NAME: &str = "new_session";
 
         let tsg_test = SessionTestObject::setup()?;

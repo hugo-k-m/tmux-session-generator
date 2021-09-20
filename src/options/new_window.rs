@@ -1,7 +1,7 @@
 //! NewWindow subcommand helpers
 
 use lib::{
-    err::{DirectoryError, ScriptError},
+    err::{CustomResult, DirectoryError, ScriptError},
     options::create_script,
     produce_directory_error, produce_script_error, tmux_bool_option, tmux_option,
 };
@@ -10,7 +10,7 @@ use std::{io::Write, path::PathBuf};
 pub(in crate::options) fn create_window_script(
     content: (String, String, String),
     tmuxsg_home: PathBuf,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> CustomResult<()> {
     let script_content = content.0;
     let session_name = content.1;
     let window_name = content.2;
@@ -40,7 +40,7 @@ pub(in crate::options) fn window_script_content(
     d: &bool,
     n: &Option<String>,
     t: &Option<String>,
-) -> Result<(String, String, String), Box<dyn std::error::Error>> {
+) -> CustomResult<(String, String, String)> {
     let error = "Window content related".to_owned();
 
     let session_name = if let Some(target) = t {
@@ -75,13 +75,16 @@ pub(in crate::options) fn window_script_content(
 // TODO: write tests
 #[cfg(test)]
 mod tests {
-    use lib::test::{TestObject, WindowTestObject};
+    use lib::{
+        err::CustomResult,
+        test::{TestObject, WindowTestObject},
+    };
     use std::path::PathBuf;
 
     use crate::options::new_window::create_window_script;
 
     #[test]
-    fn create_window_script_success() -> Result<(), Box<dyn std::error::Error>> {
+    fn create_window_script_success() -> CustomResult<()> {
         const WINDOW_NAME: &str = "test_window";
 
         let content = (

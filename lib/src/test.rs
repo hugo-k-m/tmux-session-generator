@@ -1,10 +1,11 @@
 //! Test helpers
 
+use crate::err::CustomResult;
 use std::{fs, path::PathBuf};
 use tempfile::TempDir;
 
 pub trait TestObject {
-    fn setup() -> Result<Self, Box<dyn std::error::Error>>
+    fn setup() -> CustomResult<Self>
     where
         Self: Sized;
 }
@@ -15,7 +16,7 @@ pub struct HomeTestObject {
 }
 
 impl TestObject for HomeTestObject {
-    fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+    fn setup() -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_path = PathBuf::from(&test_home_dir.path());
 
@@ -33,7 +34,7 @@ pub struct SessionTestObject {
 }
 
 impl TestObject for SessionTestObject {
-    fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+    fn setup() -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");
@@ -55,7 +56,7 @@ pub struct WindowTestObject {
 }
 
 impl TestObject for WindowTestObject {
-    fn setup() -> Result<Self, Box<dyn std::error::Error>> {
+    fn setup() -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");

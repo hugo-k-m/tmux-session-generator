@@ -3,10 +3,10 @@ mod options;
 
 use crate::home_dirs::{home_directory, tmuxsg_home_dir};
 use directories::BaseDirs;
-use std::error::Error;
+use lib::err::CustomResult;
 use structopt::StructOpt;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> CustomResult<()> {
     let opts = options::Opts::from_args();
     let home_d = home_directory(BaseDirs::new())?;
     let tmuxsg_home = tmuxsg_home_dir(home_d)?;

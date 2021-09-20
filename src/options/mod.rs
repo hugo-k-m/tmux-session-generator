@@ -1,6 +1,7 @@
 mod new_session;
 mod new_window;
 
+use lib::err::CustomResult;
 use new_session::{create_session_script, session_script_content};
 use new_window::{create_window_script, window_script_content};
 use std::{path::PathBuf, usize};
@@ -66,10 +67,7 @@ pub enum Opts {
 }
 
 impl Opts {
-    pub fn invoke_subcommand(
-        self,
-        tmuxsg_home: PathBuf,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn invoke_subcommand(self, tmuxsg_home: PathBuf) -> CustomResult<Self> {
         match &self {
             Opts::NewSession {
                 command,
