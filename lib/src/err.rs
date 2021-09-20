@@ -1,6 +1,9 @@
 //! Custom errors
 
-use std::{error::Error, fmt::Display};
+use anyhow::Result as AnyhowResult;
+use std::{error::Error as StdError, fmt::Display};
+
+pub type CustomResult<T> = AnyhowResult<T>;
 
 #[derive(Debug, Clone)]
 pub struct DirectoryError(pub String);
@@ -11,14 +14,14 @@ impl Display for DirectoryError {
     }
 }
 
-impl Error for DirectoryError {}
+impl StdError for DirectoryError {}
 
 #[macro_export]
 macro_rules! produce_directory_error {
     ($err_details:expr) => {
         let dir_err = DirectoryError($err_details);
 
-        return Err(Box::new(dir_err));
+        return Err(dir_err).map_err(anyhow::Error::msg);
     };
 }
 
@@ -31,14 +34,14 @@ impl Display for ScriptError {
     }
 }
 
-impl Error for ScriptError {}
+impl StdError for ScriptError {}
 
 #[macro_export]
 macro_rules! produce_script_error {
     ($err_details:expr) => {
         let script_err = ScriptError($err_details);
 
-        return Err(Box::new(script_err));
+        return Err(script_err).map_err(anyhow::Error::msg);
     };
 }
 
@@ -49,7 +52,7 @@ mod tests {
     #[test]
     fn directory_error_displays_correctly() {
         let actual_error_disp = format!("{}", DirectoryError("Test".to_owned()));
-        let expected_error_disp = format!("Test directory error");
+        let expected_error_disp = format!("Directory error: Test");
 
         assert_eq!(actual_error_disp, expected_error_disp);
     }
@@ -57,7 +60,7 @@ mod tests {
     #[test]
     fn script_error_displays_correctly() {
         let actual_error_disp = format!("{}", ScriptError("Test".to_owned()));
-        let expected_error_disp = format!("Test script error");
+        let expected_error_disp = format!("Script error: Test");
 
         assert_eq!(actual_error_disp, expected_error_disp);
     }
