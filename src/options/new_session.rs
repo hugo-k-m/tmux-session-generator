@@ -1,14 +1,16 @@
 //! NewSession subcommand helpers
 
-use lib::{dir::create_dir, options::create_script, tmux_option};
+use anyhow::Context;
+use lib::{dir::create_dir, err::CustomResult, options::create_script, tmux_option};
 use std::{io::Write, path::PathBuf};
 
 pub(in crate::options) fn create_session_script(
     content: String,
     s_name: &str,
     tmuxsg_home: PathBuf,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let s_dir = create_dir(tmuxsg_home, s_name.to_owned())?;
+) -> CustomResult<()> {
+    let s_dir = create_dir(tmuxsg_home, s_name.to_owned())
+        .with_context(|| format!("could not create session directory"))?;
     let mut file = create_script(s_dir, s_name)?;
     file.write_all(content.as_bytes())?;
 
@@ -66,7 +68,7 @@ mod tests {
 
     /// Test session script creation process.
     #[test]
-    fn create_session_script_success() -> Result<(), Box<dyn std::error::Error>> {
+    fn create_session_script_success() -> CustomResult<()> {
         const SESSION_NAME: &str = "new_session";
         let content = "test content".to_owned();
 
@@ -85,7 +87,7 @@ mod tests {
     }
 
     #[test]
-    fn create_session_directory_success() -> Result<(), Box<dyn std::error::Error>> {
+    fn create_session_directory_success() -> CustomResult<()> {
         let session_name = "new_session".to_owned();
 
         let tsg_test = SessionTestObject::setup()?;
@@ -105,17 +107,11 @@ mod tests {
     }
 
     #[test]
-    fn session_directory_already_exists() -> Result<(), Box<dyn std::error::Error>> {
+    fn session_directory_already_exists() -> CustomResult<()> {
         let session_name = "test_session".to_owned();
 
         let tsg_test = WindowTestObject::setup()?;
         let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
-
-        let s_dir_expected = PathBuf::from(&format!(
-            "{}/{}",
-            &tsg_home_dir_path.display(),
-            session_name
-        ));
 
         assert!(create_dir(tsg_home_dir_path, session_name).is_err());
 
@@ -123,7 +119,7 @@ mod tests {
     }
 
     #[test]
-    fn session_script_content_attach_test() -> Result<(), Box<dyn std::error::Error>> {
+    fn session_script_content_attach_test() -> CustomResult<()> {
         let attach_test_session_content = test_session_content(
             "~".to_owned(),
             false,
@@ -145,7 +141,7 @@ mod tests {
     }
 
     #[test]
-    fn session_script_content_detach_test() -> Result<(), Box<dyn std::error::Error>> {
+    fn session_script_content_detach_test() -> CustomResult<()> {
         let detach_test_session_content = test_session_content(
             "~".to_owned(),
             true,
@@ -167,7 +163,7 @@ mod tests {
     }
 
     #[test]
-    fn session_script_content_window_name_test() -> Result<(), Box<dyn std::error::Error>> {
+    fn session_script_content_window_name_test() -> CustomResult<()> {
         let detach_test_session_content = test_session_content(
             "~".to_owned(),
             true,
@@ -198,7 +194,7 @@ mod tests {
         target_session: Option<String>,
         x: Option<usize>,
         y: Option<usize>,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> CustomResult<String> {
         let error = "Session content related".to_owned();
 
         let detach_test_session = Opts::NewSession {
