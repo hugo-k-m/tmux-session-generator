@@ -9,9 +9,9 @@ pub(in crate::options) fn create_session_script(
     s_name: &str,
     tmuxsg_home: PathBuf,
 ) -> CustomResult<()> {
-    let s_dir = create_dir(tmuxsg_home, s_name.to_owned())
-        .with_context(|| format!("could not create session directory"))?;
-    let mut file = create_script(s_dir, s_name)?;
+    let s_dir = create_dir(tmuxsg_home, s_name.to_owned())?;
+    let mut file =
+        create_script(s_dir, s_name).with_context(|| format!("could not create session script"))?;
     file.write_all(content.as_bytes())?;
 
     Ok(())
@@ -87,6 +87,18 @@ mod tests {
     }
 
     #[test]
+    fn session_script_already_exists() -> CustomResult<()> {
+        let session_name = "test_session";
+
+        let tsg_test = WindowTestObject::setup()?;
+        let session_dir = tsg_test.test_session_path;
+
+        assert!(create_script(session_dir, session_name).is_err());
+
+        Ok(())
+    }
+
+    #[test]
     fn create_session_directory_success() -> CustomResult<()> {
         let session_name = "new_session".to_owned();
 
@@ -102,18 +114,6 @@ mod tests {
         create_dir(tsg_home_dir_path, session_name)?;
 
         assert!(s_dir_expected.is_dir());
-
-        Ok(())
-    }
-
-    #[test]
-    fn session_directory_already_exists() -> CustomResult<()> {
-        let session_name = "test_session".to_owned();
-
-        let tsg_test = WindowTestObject::setup()?;
-        let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
-
-        assert!(create_dir(tsg_home_dir_path, session_name).is_err());
 
         Ok(())
     }
