@@ -1,4 +1,4 @@
-//! NewSession subcommand helpers
+//! NewSession subcommand helpers.
 
 use anyhow::Context;
 use lib::{dir::create_dir, err::CustomResult, options::create_script, tmux_option};
@@ -8,8 +8,12 @@ pub(in crate::options) fn create_session_script(
     content: String,
     s_name: &str,
     tmuxsg_home: PathBuf,
+    group_option: bool,
 ) -> CustomResult<()> {
     let s_dir = create_dir(tmuxsg_home, s_name.to_owned())?;
+
+    set_session_group_option(&s_dir, group_option)?;
+
     let mut file =
         create_script(s_dir, s_name).with_context(|| format!("could not create session script"))?;
     file.write_all(content.as_bytes())?;
@@ -52,6 +56,19 @@ pub(in crate::options) fn session_script_content(
     };
 
     content
+}
+
+fn set_session_group_option(session_dir: &PathBuf, group_option: bool) -> CustomResult<()> {
+    let session_group_option = if group_option {
+        "is_session_group"
+    } else {
+        "is_not_session_group"
+    };
+
+    let mut file = create_script(session_dir.to_owned(), "session_group_option")?;
+    file.write_all(session_group_option.as_bytes())?;
+
+    Ok(())
 }
 
 #[cfg(test)]
