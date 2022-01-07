@@ -65,7 +65,7 @@ fn set_session_group_option(session_dir: &PathBuf, group_option: bool) -> Custom
         "is_not_session_group"
     };
 
-    let mut file = create_script(session_dir.to_owned(), "session_group_option")?;
+    let mut file = create_script(session_dir.to_owned(), "__session_group_option")?;
     file.write_all(session_group_option.as_bytes())?;
 
     Ok(())
@@ -88,6 +88,7 @@ mod tests {
     fn create_session_script_success() -> CustomResult<()> {
         const SESSION_NAME: &str = "new_session";
         let content = "test content".to_owned();
+        let group_option = false;
 
         let tsg_test = SessionTestObject::setup()?;
         let tsg_home_dir = tsg_test.test_tmuxsg_path;
@@ -96,7 +97,7 @@ mod tests {
         let script_path_expected =
             PathBuf::from(&format!("{}/{}.sh", session_dir.display(), SESSION_NAME));
 
-        create_session_script(content, SESSION_NAME, tsg_home_dir)?;
+        create_session_script(content, SESSION_NAME, tsg_home_dir, group_option)?;
 
         assert!(script_path_expected.is_file());
 

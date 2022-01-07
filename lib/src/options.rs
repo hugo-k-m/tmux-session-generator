@@ -1,4 +1,4 @@
-//! Shared utilities for the options module
+//! Shared utilities for the options module.
 
 use crate::{
     err::{CustomResult, ScriptError},

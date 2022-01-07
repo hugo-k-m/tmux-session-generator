@@ -1,10 +1,8 @@
 mod new_session;
 mod new_window;
+mod parser_associated_functions;
 
-use lib::err::CustomResult;
-use new_session::{create_session_script, session_script_content};
-use new_window::{create_window_script, window_script_content};
-use std::{path::PathBuf, usize};
+use std::usize;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -64,50 +62,4 @@ pub enum Opts {
         #[structopt(short, long)]
         target_window: Option<String>,
     },
-}
-
-impl Opts {
-    pub fn invoke_subcommand(self, tmuxsg_home: PathBuf) -> CustomResult<Self> {
-        match &self {
-            Opts::NewSession {
-                command,
-                detach,
-                name_window,
-                session_name,
-                target_session,
-                x,
-                y,
-            } => {
-                let content = session_script_content(
-                    command,
-                    detach,
-                    name_window,
-                    session_name,
-                    target_session,
-                    x,
-                    y,
-                );
-
-                create_session_script(content, session_name, tmuxsg_home)?;
-
-                Ok(self)
-            }
-
-            Opts::NewWindow {
-                a,
-                kill,
-                command,
-                detach,
-                name_window,
-                target_window,
-            } => {
-                let content =
-                    window_script_content(a, kill, command, detach, name_window, target_window)?;
-
-                create_window_script(content, tmuxsg_home)?;
-
-                Ok(self)
-            }
-        }
-    }
 }
