@@ -73,8 +73,10 @@ fn session_script_content_attach_test() -> CustomResult<()> {
         None,
     )?;
 
-    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("resources/test/script_content_checks/session/attach_test_session.sh");
+    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+        "resources/test/script_content_checks/\
+            session/attach_test_session.sh",
+    );
 
     let expected_test_session_content = fs::read_to_string(test_content)?;
 
@@ -95,8 +97,10 @@ fn session_script_content_detach_test() -> CustomResult<()> {
         None,
     )?;
 
-    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("resources/test/script_content_checks/session/detach_test_session.sh");
+    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+        "resources/test/script_content_checks/\
+            session/detach_test_session.sh",
+    );
 
     let expected_test_session_content = fs::read_to_string(test_content)?;
 
@@ -117,12 +121,29 @@ fn session_script_content_window_name_test() -> CustomResult<()> {
         None,
     )?;
 
-    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("resources/test/script_content_checks/session/name_window_option_test_session.sh");
+    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+        "resources/test/script_content_checks/\
+            session/name_window_option_test_session.sh",
+    );
 
     let expected_test_session_content = fs::read_to_string(test_content)?;
 
     assert_eq!(detach_test_session_content, expected_test_session_content);
+
+    Ok(())
+}
+
+#[test]
+fn session_group_option_script_creation_success() -> CustomResult<()> {
+    let group_option = false;
+    let session_name = "test_session";
+    let tsg_test = WindowTestObject::setup()?;
+    let session_dir = tsg_test.test_session_path;
+    let expected_group_script = session_dir.join("__session_group_option.sh");
+
+    set_session_group_option(&session_dir, group_option)?;
+
+    assert!(expected_group_script.is_file());
 
     Ok(())
 }
