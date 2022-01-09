@@ -10,30 +10,30 @@ pub trait TestObject {
         Self: Sized;
 }
 
-pub struct HomeTestObject {
+pub struct TestHomeDir {
     pub test_home_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl TestObject for HomeTestObject {
+impl TestObject for TestHomeDir {
     fn setup() -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_path = PathBuf::from(&test_home_dir.path());
 
-        Ok(HomeTestObject {
+        Ok(TestHomeDir {
             test_home_path,
             _test_home_dir: test_home_dir,
         })
     }
 }
 
-pub struct SessionTestObject {
+pub struct TestTmuxHomeDir {
     pub test_tmuxsg_path: PathBuf,
     pub test_home_dir_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl TestObject for SessionTestObject {
+impl TestObject for TestTmuxHomeDir {
     fn setup() -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
@@ -41,7 +41,7 @@ impl TestObject for SessionTestObject {
 
         fs::create_dir(&test_tmuxsg_path)?;
 
-        Ok(SessionTestObject {
+        Ok(TestTmuxHomeDir {
             test_tmuxsg_path,
             test_home_dir_path,
             _test_home_dir: test_home_dir,
@@ -49,13 +49,13 @@ impl TestObject for SessionTestObject {
     }
 }
 
-pub struct WindowTestObject {
+pub struct TestSessionDir {
     pub test_tmuxsg_path: PathBuf,
     pub test_session_path: PathBuf,
     _test_home_dir: TempDir,
 }
 
-impl TestObject for WindowTestObject {
+impl TestObject for TestSessionDir {
     fn setup() -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
@@ -67,7 +67,7 @@ impl TestObject for WindowTestObject {
         fs::create_dir(&test_session_path)?;
         fs::File::create(script_path)?;
 
-        Ok(WindowTestObject {
+        Ok(TestSessionDir {
             test_tmuxsg_path,
             test_session_path,
             _test_home_dir: test_home_dir,

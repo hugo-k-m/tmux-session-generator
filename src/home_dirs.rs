@@ -31,13 +31,13 @@ mod tests {
     use directories::BaseDirs;
     use lib::{
         err::CustomResult,
-        test::{HomeTestObject, SessionTestObject, TestObject},
+        test::{TestHomeDir, TestObject, TestTmuxHomeDir},
     };
     use std::path::PathBuf;
 
     #[test]
     fn create_tmuxsg_home_directory_success() -> CustomResult<()> {
-        let tsg_test = HomeTestObject::setup()?;
+        let tsg_test = TestHomeDir::setup()?;
         let home_dir = tsg_test.test_home_path;
         let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", home_dir.display()));
         tmuxsg_home_dir(home_dir)?;
@@ -49,7 +49,7 @@ mod tests {
 
     #[test]
     fn test_tmuxsg_home_dir_when_directory_already_exists() -> CustomResult<()> {
-        let tsg_test = SessionTestObject::setup()?;
+        let tsg_test = TestTmuxHomeDir::setup()?;
         let home_dir = tsg_test.test_home_dir_path;
         let tsg_home_expected = PathBuf::from(&format!("{}/.tmuxsg", home_dir.display()));
 

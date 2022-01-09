@@ -77,7 +77,7 @@ pub(in crate::options) fn window_script_content(
 mod tests {
     use lib::{
         err::CustomResult,
-        test::{TestObject, WindowTestObject},
+        test::{TestObject, TestSessionDir},
     };
     use std::path::PathBuf;
 
@@ -93,7 +93,7 @@ mod tests {
             WINDOW_NAME.to_owned(),
         );
 
-        let tsg_test = WindowTestObject::setup()?;
+        let tsg_test = TestSessionDir::setup()?;
         let tmuxsg_home = tsg_test.test_tmuxsg_path;
         let session_dir = tsg_test.test_session_path;
 

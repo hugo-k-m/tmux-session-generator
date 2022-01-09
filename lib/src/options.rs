@@ -49,7 +49,7 @@ mod tests {
     use crate::{
         err::CustomResult,
         options::create_script,
-        test::{SessionTestObject, TestObject},
+        test::{TestObject, TestTmuxHomeDir},
     };
     use std::{fs, path::PathBuf};
 
@@ -58,7 +58,7 @@ mod tests {
     fn create_script_success() -> CustomResult<()> {
         const SESSION_NAME: &str = "new_session";
 
-        let tsg_test = SessionTestObject::setup()?;
+        let tsg_test = TestTmuxHomeDir::setup()?;
         let tsg_dir = tsg_test.test_tmuxsg_path;
 
         let session_dir = PathBuf::from(&format!("{}/{}", tsg_dir.display(), SESSION_NAME));

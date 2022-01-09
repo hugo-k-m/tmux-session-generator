@@ -4,7 +4,7 @@ use lib::{
     dir::create_dir,
     err::ScriptError,
     produce_script_error,
-    test::{SessionTestObject, TestObject, WindowTestObject},
+    test::{TestObject, TestSessionDir, TestTmuxHomeDir},
 };
 use std::fs;
 
@@ -15,7 +15,7 @@ fn create_session_script_success() -> CustomResult<()> {
     let content = "test content".to_owned();
     let group_option = false;
 
-    let tsg_test = SessionTestObject::setup()?;
+    let tsg_test = TestTmuxHomeDir::setup()?;
     let tsg_home_dir = tsg_test.test_tmuxsg_path;
     let session_dir = PathBuf::from(&format!("{}/{}", tsg_home_dir.display(), SESSION_NAME));
 
@@ -33,7 +33,7 @@ fn create_session_script_success() -> CustomResult<()> {
 fn session_script_already_exists() -> CustomResult<()> {
     let session_name = "test_session";
 
-    let tsg_test = WindowTestObject::setup()?;
+    let tsg_test = TestSessionDir::setup()?;
     let session_dir = tsg_test.test_session_path;
 
     assert!(create_script(session_dir, session_name).is_err());
@@ -45,7 +45,7 @@ fn session_script_already_exists() -> CustomResult<()> {
 fn create_session_directory_success() -> CustomResult<()> {
     let session_name = "new_session".to_owned();
 
-    let tsg_test = SessionTestObject::setup()?;
+    let tsg_test = TestTmuxHomeDir::setup()?;
     let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
 
     let s_dir_expected = PathBuf::from(&format!(
@@ -136,8 +136,7 @@ fn session_script_content_window_name_test() -> CustomResult<()> {
 #[test]
 fn session_group_option_script_creation_success() -> CustomResult<()> {
     let group_option = false;
-    let session_name = "test_session";
-    let tsg_test = WindowTestObject::setup()?;
+    let tsg_test = TestSessionDir::setup()?;
     let session_dir = tsg_test.test_session_path;
     let expected_group_script = session_dir.join("__session_group_option.sh");
 
@@ -147,6 +146,9 @@ fn session_group_option_script_creation_success() -> CustomResult<()> {
 
     Ok(())
 }
+
+#[test]
+fn group_script_creation_fails_if_exists() {}
 
 /// Test helper function; returns test session script content
 fn test_session_content(
