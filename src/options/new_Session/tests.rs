@@ -4,7 +4,7 @@ use lib::{
     dir::create_dir,
     err::ScriptError,
     produce_script_error,
-    test::{TestObject, TestSessionDir, TestTmuxHomeDir},
+    test::{TestObject, TestSessionDir, TestSessionDirGroupScript, TestTmuxHomeDir},
 };
 use std::fs;
 
@@ -148,7 +148,17 @@ fn session_group_option_script_creation_success() -> CustomResult<()> {
 }
 
 #[test]
-fn group_script_creation_fails_if_exists() {}
+fn group_script_creation_fails_if_exists() -> CustomResult<()> {
+    let group_option = false;
+    let tsg_test = TestSessionDirGroupScript::setup()?;
+    let session_dir = tsg_test.test_session_path;
+    let expected_group_script = session_dir.join("__session_group_option.sh");
+
+    assert!(expected_group_script.is_file());
+    assert!(set_session_group_option(&session_dir, group_option).is_err());
+
+    Ok(())
+}
 
 /// Test helper function; returns test session script content
 fn test_session_content(
