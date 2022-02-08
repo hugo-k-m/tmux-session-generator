@@ -30,13 +30,18 @@ fn create_session_script_success() -> CustomResult<()> {
 }
 
 #[test]
-fn session_script_already_exists() -> CustomResult<()> {
+fn session_script_unaffected_if_already_exists() -> CustomResult<()> {
     let session_name = "test_session";
 
     let tsg_test = TestSessionDir::setup()?;
     let session_dir = tsg_test.test_session_path;
+    let expected_session_script = session_dir.join("test_session.sh");
 
-    assert!(create_script(session_dir, session_name).is_err());
+    assert!(expected_session_script.is_file());
+
+    create_script(session_dir, session_name)?;
+
+    assert!(expected_session_script.is_file());
 
     Ok(())
 }
@@ -148,14 +153,18 @@ fn session_group_option_script_creation_success() -> CustomResult<()> {
 }
 
 #[test]
-fn group_script_creation_fails_if_exists() -> CustomResult<()> {
-    let group_option = false;
-    let tsg_test = TestSessionDirGroupScript::setup()?;
+fn group_script_creation_doesnt_affect_existing_script() -> CustomResult<()> {
+    let group_option = true;
+    let tsg_test = TestSessionDirGroupScript::setup(group_option)?;
     let session_dir = tsg_test.test_session_path;
     let expected_group_script = session_dir.join("__session_group_option.sh");
 
     assert!(expected_group_script.is_file());
-    assert!(set_session_group_option(&session_dir, group_option).is_err());
+
+    set_session_group_option(&session_dir, group_option)?;
+    let data = fs::read_to_string(expected_group_script)?;
+
+    assert_eq!(data, "is_session_group");
 
     Ok(())
 }

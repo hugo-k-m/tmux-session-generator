@@ -1,7 +1,7 @@
 //! Test helpers
 
 use crate::err::CustomResult;
-use std::{fs, path::PathBuf};
+use std::{fs, io::Write, path::PathBuf};
 use tempfile::TempDir;
 
 pub trait TestObject {
@@ -81,8 +81,14 @@ pub struct TestSessionDirGroupScript {
     _test_home_dir: TempDir,
 }
 
-impl TestObject for TestSessionDirGroupScript {
-    fn setup() -> CustomResult<Self> {
+impl TestSessionDirGroupScript {
+    pub fn setup(group_option: bool) -> CustomResult<Self> {
+        let session_group_option = if group_option {
+            "is_session_group"
+        } else {
+            "is_not_session_group"
+        };
+
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");
@@ -92,7 +98,10 @@ impl TestObject for TestSessionDirGroupScript {
 
         fs::create_dir(&test_tmuxsg_path)?;
         fs::create_dir(&test_session_path)?;
-        fs::File::create(group_script_path)?;
+
+        let mut group_script = fs::File::create(group_script_path)?;
+        group_script.write_all(session_group_option.as_bytes())?;
+
         fs::File::create(script_path)?;
 
         Ok(TestSessionDirGroupScript {

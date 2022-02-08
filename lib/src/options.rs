@@ -1,9 +1,6 @@
 //! Shared utilities for the options module.
 
-use crate::{
-    err::{CustomResult, ScriptError},
-    produce_script_error,
-};
+use crate::err::CustomResult;
 use std::{
     fs::{self, File},
     path::PathBuf,
@@ -12,11 +9,6 @@ use std::{
 /// Creates the script and opens it in write-only mode.
 pub fn create_script(session_dir: PathBuf, script_name: &str) -> CustomResult<File> {
     let script_path = session_dir.join(&format!("{}.sh", script_name));
-
-    if script_path.is_file() {
-        produce_script_error!(format!("{}", script_name));
-    }
-
     let file = fs::File::create(&script_path)?;
 
     Ok(file)
