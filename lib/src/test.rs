@@ -5,7 +5,7 @@ use std::{fs, io::Write, path::PathBuf};
 use tempfile::TempDir;
 
 pub trait TestObject {
-    fn setup() -> CustomResult<Self>
+    fn setup(group_option: Option<bool>) -> CustomResult<Self>
     where
         Self: Sized;
 }
@@ -16,7 +16,7 @@ pub struct TestHomeDir {
 }
 
 impl TestObject for TestHomeDir {
-    fn setup() -> CustomResult<Self> {
+    fn setup(group_option: Option<bool>) -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_path = PathBuf::from(&test_home_dir.path());
 
@@ -34,7 +34,7 @@ pub struct TestTmuxHomeDir {
 }
 
 impl TestObject for TestTmuxHomeDir {
-    fn setup() -> CustomResult<Self> {
+    fn setup(group_option: Option<bool>) -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");
@@ -56,7 +56,7 @@ pub struct TestSessionDir {
 }
 
 impl TestObject for TestSessionDir {
-    fn setup() -> CustomResult<Self> {
+    fn setup(group_option: Option<bool>) -> CustomResult<Self> {
         let test_home_dir = tempfile::tempdir()?;
         let test_home_dir_path = PathBuf::from(&test_home_dir.path());
         let test_tmuxsg_path = test_home_dir_path.join(".tmuxsg");
@@ -82,8 +82,8 @@ pub struct TestSessionDirGroupScript {
 }
 
 impl TestSessionDirGroupScript {
-    pub fn setup(group_option: bool) -> CustomResult<Self> {
-        let session_group_option = if group_option {
+    pub fn setup(group_option: Option<bool>) -> CustomResult<Self> {
+        let session_group_option = if let Some(_) = group_option {
             "is_session_group"
         } else {
             "is_not_session_group"

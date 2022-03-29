@@ -93,7 +93,7 @@ mod tests {
             WINDOW_NAME.to_owned(),
         );
 
-        let tsg_test = TestSessionDir::setup()?;
+        let tsg_test = TestSessionDir::setup(None)?;
         let tmuxsg_home = tsg_test.test_tmuxsg_path;
         let session_dir = tsg_test.test_session_path;
 
