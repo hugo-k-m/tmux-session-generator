@@ -1,4 +1,4 @@
-//! Test helpers
+//! Mock objects and test helpers
 
 use crate::err::CustomResult;
 use std::{fs, io::Write, path::PathBuf};
