@@ -10,10 +10,9 @@ use std::fs;
 
 /// Test session script creation process.
 #[test]
-fn create_session_script_success() -> CustomResult<()> {
+fn create_session_script_none_case() -> CustomResult<()> {
     const SESSION_NAME: &str = "new_session";
     let content = "test content".to_owned();
-    let group_option = false;
 
     let tsg_test = TestTmuxHomeDir::setup(None)?;
     let tsg_home_dir = tsg_test.test_tmuxsg_path;
@@ -22,7 +21,7 @@ fn create_session_script_success() -> CustomResult<()> {
     let script_path_expected =
         PathBuf::from(&format!("{}/{}.sh", session_dir.display(), SESSION_NAME));
 
-    create_session_script(content, SESSION_NAME, tsg_home_dir, group_option)?;
+    create_session_script(content, SESSION_NAME, None, tsg_home_dir)?;
 
     assert!(script_path_expected.is_file());
 
