@@ -31,7 +31,7 @@ mod tests {
     use directories::BaseDirs;
     use lib::{
         err::CustomResult,
-        test::{TestHomeDir, TestObject, TestTmuxHomeDir},
+        mocks::{TestHomeDir, TestObject, TestTmuxHomeDir},
     };
     use std::path::PathBuf;
 

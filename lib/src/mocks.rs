@@ -182,6 +182,7 @@ mod tests {
 
         assert_eq!(19, dir_size);
         assert!(session_dir.join("first_test_session_1.sh").is_file());
+        assert!(!(session_dir.join("first_test_session_3.sh").is_file()));
         assert!(session_dir.join("second_test_session_9.sh").is_file());
         assert!(session_dir.join("third_test_session_3.sh").is_file());
 

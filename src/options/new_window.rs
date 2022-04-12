@@ -77,7 +77,7 @@ pub(in crate::options) fn window_script_content(
 mod tests {
     use lib::{
         err::CustomResult,
-        test::{TestObject, TestSessionDir},
+        mocks::{TestObject, TestSessionDir},
     };
     use std::path::PathBuf;
 

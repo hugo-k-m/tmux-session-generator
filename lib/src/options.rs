@@ -41,7 +41,7 @@ mod tests {
     use crate::{
         err::CustomResult,
         options::create_script,
-        test::{TestObject, TestTmuxHomeDir},
+        mocks::{TestObject, TestTmuxHomeDir},
     };
     use std::{fs, path::PathBuf};
 

@@ -3,8 +3,8 @@ use crate::options::Opts;
 use lib::{
     dir::create_dir,
     err::ScriptError,
+    mocks::{TestObject, TestSessionDir, TestSessionDirGroupScript, TestTmuxHomeDir},
     produce_script_error,
-    test::{TestObject, TestSessionDir, TestSessionDirGroupScript, TestTmuxHomeDir},
 };
 use std::fs;
 
@@ -15,7 +15,7 @@ fn create_session_script_success() -> CustomResult<()> {
     let content = "test content".to_owned();
     let group_option = false;
 
-    let tsg_test = TestTmuxHomeDir::setup()?;
+    let tsg_test = TestTmuxHomeDir::setup(None)?;
     let tsg_home_dir = tsg_test.test_tmuxsg_path;
     let session_dir = PathBuf::from(&format!("{}/{}", tsg_home_dir.display(), SESSION_NAME));
 
@@ -31,11 +31,11 @@ fn create_session_script_success() -> CustomResult<()> {
 
 #[test]
 fn session_script_unaffected_if_already_exists() -> CustomResult<()> {
-    let session_name = "test_session";
+    let session_name = "test_session_0";
 
-    let tsg_test = TestSessionDir::setup()?;
+    let tsg_test = TestSessionDir::setup(None)?;
     let session_dir = tsg_test.test_session_path;
-    let expected_session_script = session_dir.join("test_session.sh");
+    let expected_session_script = session_dir.join("test_session_0.sh");
 
     assert!(expected_session_script.is_file());
 
@@ -50,7 +50,7 @@ fn session_script_unaffected_if_already_exists() -> CustomResult<()> {
 fn create_session_directory_success() -> CustomResult<()> {
     let session_name = "new_session".to_owned();
 
-    let tsg_test = TestTmuxHomeDir::setup()?;
+    let tsg_test = TestTmuxHomeDir::setup(None)?;
     let tsg_home_dir_path = tsg_test.test_tmuxsg_path;
 
     let s_dir_expected = PathBuf::from(&format!(
@@ -141,7 +141,7 @@ fn session_script_content_window_name_test() -> CustomResult<()> {
 #[test]
 fn session_group_option_script_creation_success() -> CustomResult<()> {
     let group_option = false;
-    let tsg_test = TestSessionDir::setup()?;
+    let tsg_test = TestSessionDir::setup(None)?;
     let session_dir = tsg_test.test_session_path;
     let expected_group_script = session_dir.join("__session_group_option.sh");
 
@@ -155,7 +155,7 @@ fn session_group_option_script_creation_success() -> CustomResult<()> {
 #[test]
 fn group_script_creation_doesnt_affect_existing_script() -> CustomResult<()> {
     let group_option = true;
-    let tsg_test = TestSessionDirGroupScript::setup(group_option)?;
+    let tsg_test = TestSessionDirGroupScript::setup(Some(group_option)).unwrap();
     let session_dir = tsg_test.test_session_path;
     let expected_group_script = session_dir.join("__session_group_option.sh");
 
