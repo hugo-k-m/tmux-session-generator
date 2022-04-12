@@ -1,5 +1,6 @@
-use super::new_session::{create_session_script, session_script_content};
+use super::new_session::session_script_content;
 use super::new_window::{create_window_script, window_script_content};
+use super::parser_helpers::handle_new_session_options;
 use super::Opts;
 use lib::err::CustomResult;
 use std::path::PathBuf;
@@ -26,9 +27,7 @@ impl Opts {
                     y,
                 );
 
-                let group_option = false;
-
-                create_session_script(content, session_name, tmuxsg_home, group_option)?;
+                handle_new_session_options(content, session_name, target_session, tmuxsg_home)?;
 
                 Ok(self)
             }

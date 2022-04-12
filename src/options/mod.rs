@@ -1,6 +1,7 @@
 mod new_session;
 mod new_window;
 mod parser_associated_functions;
+mod parser_helpers;
 
 use std::usize;
 use structopt::StructOpt;
