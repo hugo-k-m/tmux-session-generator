@@ -2,7 +2,7 @@
 
 use anyhow::Context;
 use lib::{dir::create_dir, err::CustomResult, options::create_script, tmux_option};
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{io::Write, path::PathBuf};
 
 fn set_session_group_option(session_dir: &PathBuf, group_option: bool) -> CustomResult<()> {
     let session_group_option = if group_option {
@@ -11,7 +11,7 @@ fn set_session_group_option(session_dir: &PathBuf, group_option: bool) -> Custom
         "is_not_session_group"
     };
 
-    let mut file = create_script(session_dir.to_owned(), "__session_group_option")?;
+    let mut file = create_script(session_dir.to_owned(), "__session_group_option".to_owned())?;
     file.write_all(session_group_option.as_bytes())?;
 
     Ok(())
@@ -19,27 +19,23 @@ fn set_session_group_option(session_dir: &PathBuf, group_option: bool) -> Custom
 
 pub(in crate::options) fn create_session_script(
     content: String,
-    s_name: &str,
+    s_name: String,
     target_session: Option<String>,
     tmuxsg_home: PathBuf,
 ) -> CustomResult<()> {
-    let mut file: File;
-
-    if let Some(target) = target_session {
+    let mut file = if let Some(target) = target_session {
         let s_dir = create_dir(tmuxsg_home, target.to_owned())?;
         let group_option = true;
         set_session_group_option(&s_dir, group_option)?;
 
-        file = create_script(s_dir, s_name)
-            .with_context(|| format!("could not create session script"))?;
+        create_script(s_dir, s_name).with_context(|| format!("could not create session script"))?
     } else {
         let s_dir = create_dir(tmuxsg_home, s_name.to_owned())?;
         let group_option = false;
         set_session_group_option(&s_dir, group_option)?;
 
-        file = create_script(s_dir, s_name)
-            .with_context(|| format!("could not create session script"))?;
-    }
+        create_script(s_dir, s_name).with_context(|| format!("could not create session script"))?
+    };
 
     file.write_all(content.as_bytes())?;
 

@@ -26,7 +26,7 @@ pub(in crate::options) fn create_window_script(
     if !session_dir.is_dir() {
         produce_directory_error!(format!("{}", isolated_session_name));
     } else {
-        let mut file = create_script(session_dir, &window_name)?;
+        let mut file = create_script(session_dir, window_name)?;
         file.write_all(script_content.as_bytes())?;
     }
 

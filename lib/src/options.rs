@@ -7,7 +7,7 @@ use std::{
 };
 
 /// Creates the script and opens it in write-only mode.
-pub fn create_script(session_dir: PathBuf, script_name: &str) -> CustomResult<File> {
+pub fn create_script(session_dir: PathBuf, script_name: String) -> CustomResult<File> {
     let script_path = session_dir.join(&format!("{}.sh", script_name));
     let file = fs::File::create(&script_path)?;
 
@@ -40,26 +40,26 @@ macro_rules! tmux_bool_option {
 mod tests {
     use crate::{
         err::CustomResult,
-        options::create_script,
         mocks::{TestObject, TestTmuxHomeDir},
+        options::create_script,
     };
     use std::{fs, path::PathBuf};
 
     /// Test script creation process
     #[test]
     fn create_script_success() -> CustomResult<()> {
-        const SESSION_NAME: &str = "new_session";
+        let session_name = "new_session".to_owned();
 
         let tsg_test = TestTmuxHomeDir::setup(None)?;
         let tsg_dir = tsg_test.test_tmuxsg_path;
 
-        let session_dir = PathBuf::from(&format!("{}/{}", tsg_dir.display(), SESSION_NAME));
+        let session_dir = PathBuf::from(&format!("{}/{}", tsg_dir.display(), session_name));
         fs::create_dir(&session_dir)?;
 
         let script_path_expected =
-            PathBuf::from(&format!("{}/{}.sh", session_dir.display(), SESSION_NAME));
+            PathBuf::from(&format!("{}/{}.sh", session_dir.display(), session_name));
 
-        create_script(session_dir, SESSION_NAME)?;
+        create_script(session_dir, session_name)?;
 
         assert!(script_path_expected.is_file());
 

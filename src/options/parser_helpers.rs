@@ -102,6 +102,9 @@ fn determine_new_session_index(
 /// If a directory corresponding to the target already exists, then the new script will be added to
 /// the session group. If no such group exists, then this function will create a new session group
 /// named after the specified target.
+///
+/// If the target option is not provided, a new session directory will be created using the
+/// specified session name.
 pub(in crate::options) fn handle_new_session_options(
     content: String,
     session_name: &String,
@@ -123,7 +126,7 @@ pub(in crate::options) fn handle_new_session_options(
 
                 create_session_script(
                     content,
-                    &new_group_session_name,
+                    new_group_session_name,
                     target_session.to_owned(),
                     tmuxsg_home,
                 )?;
@@ -136,7 +139,7 @@ pub(in crate::options) fn handle_new_session_options(
                     target_dir_path.clone(),
                 )?;
 
-                let new_group_session_name = &format!("{}_{}", session_name, new_session_index);
+                let new_group_session_name = format!("{}_{}", session_name, new_session_index);
 
                 create_session_script(
                     content,
@@ -152,7 +155,7 @@ pub(in crate::options) fn handle_new_session_options(
 
     let new_group_session_name = session_name.to_owned() + "_0";
 
-    create_session_script(content, &new_group_session_name, None, tmuxsg_home)?;
+    create_session_script(content, new_group_session_name, None, tmuxsg_home)?;
 
     Ok(())
 }

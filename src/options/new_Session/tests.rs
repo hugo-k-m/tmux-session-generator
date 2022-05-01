@@ -11,17 +11,17 @@ use std::fs;
 /// Test session script creation process.
 #[test]
 fn create_session_script_none_case() -> CustomResult<()> {
-    const SESSION_NAME: &str = "new_session";
+    let session_name = "new_session".to_owned();
     let content = "test content".to_owned();
 
     let tsg_test = TestTmuxHomeDir::setup(None)?;
     let tsg_home_dir = tsg_test.test_tmuxsg_path;
-    let session_dir = PathBuf::from(&format!("{}/{}", tsg_home_dir.display(), SESSION_NAME));
+    let session_dir = PathBuf::from(&format!("{}/{}", tsg_home_dir.display(), session_name));
 
     let script_path_expected =
-        PathBuf::from(&format!("{}/{}.sh", session_dir.display(), SESSION_NAME));
+        PathBuf::from(&format!("{}/{}.sh", session_dir.display(), session_name));
 
-    create_session_script(content, SESSION_NAME, None, tsg_home_dir)?;
+    create_session_script(content, session_name, None, tsg_home_dir)?;
 
     assert!(script_path_expected.is_file());
 
@@ -30,7 +30,7 @@ fn create_session_script_none_case() -> CustomResult<()> {
 
 #[test]
 fn session_script_unaffected_if_already_exists() -> CustomResult<()> {
-    let session_name = "test_session_0";
+    let session_name = "test_session_0".to_owned();
 
     let tsg_test = TestSessionDir::setup(None)?;
     let session_dir = tsg_test.test_session_path;
