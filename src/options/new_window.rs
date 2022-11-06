@@ -15,6 +15,7 @@ pub(in crate::options) fn create_window_script(
     let session_name = content.1;
     let window_name = content.2;
 
+    // test this; consider using bytes() instead of collect()
     let isolated_session_name = if session_name.contains(":") {
         session_name.split(":").collect::<Vec<&str>>()[0].to_owned()
     } else {
@@ -77,7 +78,7 @@ pub(in crate::options) fn window_script_content(
 mod tests {
     use lib::{
         err::CustomResult,
-        mocks::{TestObject, TestSessionDir},
+        mocks::{TestObject, TestSessionDir, TestTmuxHomeDir},
     };
     use std::path::PathBuf;
 
@@ -103,6 +104,25 @@ mod tests {
         create_window_script(content, tmuxsg_home)?;
 
         assert!(script_path_expected.is_file());
+
+        Ok(())
+    }
+
+    #[test]
+    fn session_directory_doesnt_exist() -> CustomResult<()> {
+        const WINDOW_NAME: &str = "test_window";
+
+        let content = (
+            "test content".to_owned(),
+            "test_session".to_owned(),
+            WINDOW_NAME.to_owned(),
+        );
+
+        let tsg_test = TestTmuxHomeDir::setup(None)?;
+        let tmuxsg_home = tsg_test.test_tmuxsg_path;
+        let test_result = create_window_script(content, tmuxsg_home).is_err();
+
+        assert_eq!(test_result, true);
 
         Ok(())
     }
