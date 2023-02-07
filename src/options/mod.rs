@@ -7,7 +7,9 @@ use std::usize;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
+#[structopt(name = "tmuxsg", about = "A Tmux CLI management system.")]
 pub enum Opts {
+    /// Create a new session with name session-name
     NewSession {
         /// Specify working directory for the session.
         #[structopt(short, long, default_value = "~")]
@@ -38,6 +40,7 @@ pub enum Opts {
         y: Option<usize>,
     },
 
+    /// Create a new window.
     NewWindow {
         /// Insert new window at next free index from -t
         #[structopt(short, long)]
