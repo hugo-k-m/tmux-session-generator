@@ -12,6 +12,6 @@ output is located in the `new_session_base` subdirectory.
 Command:
 
 ```
-tmux new-session -d -s new_session -c ~
+tmuxsg new-session -d -s new_session -c ~
 
 ```
