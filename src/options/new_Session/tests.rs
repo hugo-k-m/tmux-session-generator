@@ -1,10 +1,9 @@
+use crate::options::test_utils::test_utils::test_session_content;
+
 use super::*;
-use crate::options::Opts;
 use lib::{
     dir::create_dir,
-    err::ScriptError,
     mocks::{TestObject, TestSessionDir, TestSessionDirGroupScript, TestTmuxHomeDir},
-    produce_script_error,
 };
 use std::fs;
 
@@ -166,52 +165,4 @@ fn group_script_creation_doesnt_affect_existing_script() -> CustomResult<()> {
     assert_eq!(data, "is_session_group");
 
     Ok(())
-}
-
-/// Test helper function; returns test session script content
-fn test_session_content(
-    command: String,
-    detach: bool,
-    name_window: Option<String>,
-    session_name: String,
-    target_session: Option<String>,
-    x: Option<usize>,
-    y: Option<usize>,
-) -> CustomResult<String> {
-    let error = "Session content related".to_owned();
-
-    let detach_test_session = Opts::NewSession {
-        command,
-        detach,
-        name_window,
-        session_name,
-        target_session,
-        x,
-        y,
-    };
-
-    let test_session_content = if let Opts::NewSession {
-        command,
-        detach,
-        name_window,
-        session_name,
-        target_session,
-        x,
-        y,
-    } = detach_test_session
-    {
-        session_script_content(
-            &command,
-            &detach,
-            &name_window,
-            &session_name,
-            &target_session,
-            &x,
-            &y,
-        )
-    } else {
-        produce_script_error!(error);
-    };
-
-    Ok(test_session_content)
 }
