@@ -1,4 +1,4 @@
-//! NewWindow subcommand helpers
+//! NewWindow subcommand helpers.
 
 use lib::{
     err::{CustomResult, DirectoryError, ScriptError},
@@ -34,7 +34,7 @@ pub(in crate::options) fn create_window_script(
     Ok(())
 }
 
-pub(in crate::options) fn window_script_content(
+pub(in crate::options) fn create_window_script_content(
     a: &bool,
     k: &bool,
     command: &String,
@@ -80,9 +80,11 @@ mod tests {
         err::CustomResult,
         mocks::{TestObject, TestSessionDir, TestTmuxHomeDir},
     };
-    use std::path::PathBuf;
+    use std::{fs, path::PathBuf};
 
-    use crate::options::new_window::create_window_script;
+    use crate::options::{
+        new_window::create_window_script, test_utils::test_utils::create_window_test_content,
+    };
 
     #[test]
     fn create_window_script_success() -> CustomResult<()> {
@@ -123,6 +125,25 @@ mod tests {
         let test_result = create_window_script(content, tmuxsg_home).is_err();
 
         assert_eq!(test_result, true);
+
+        Ok(())
+    }
+
+    #[test]
+    fn create_window_script_content_test() -> CustomResult<()> {
+        let test_window_content = create_window_test_content(
+            false,
+            false,
+            "~".to_owned(),
+            false,
+            Some("test_window".to_owned()),
+            Some("1".to_owned()),
+        );
+
+        let ex_test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("resources/examples/new_window/new_window.sh");
+
+        let expected_test_session_content = fs::read_to_string(ex_test_content)?;
 
         Ok(())
     }

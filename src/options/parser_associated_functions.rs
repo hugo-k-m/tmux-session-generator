@@ -1,5 +1,5 @@
-use super::new_session::session_script_content;
-use super::new_window::{create_window_script, window_script_content};
+use super::new_session::create_session_script_content;
+use super::new_window::{create_window_script, create_window_script_content};
 use super::parser_helpers::handle_new_session_options;
 use super::Opts;
 use lib::err::CustomResult;
@@ -17,7 +17,7 @@ impl Opts {
                 x,
                 y,
             } => {
-                let content = session_script_content(
+                let content = create_session_script_content(
                     command,
                     detach,
                     name_window,
@@ -40,8 +40,14 @@ impl Opts {
                 name_window,
                 target_window,
             } => {
-                let content =
-                    window_script_content(a, kill, command, detach, name_window, target_window)?;
+                let content = create_window_script_content(
+                    a,
+                    kill,
+                    command,
+                    detach,
+                    name_window,
+                    target_window,
+                )?;
 
                 create_window_script(content, tmuxsg_home)?;
 

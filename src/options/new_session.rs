@@ -42,7 +42,7 @@ pub(in crate::options) fn create_session_script(
     Ok(())
 }
 
-pub(in crate::options) fn session_script_content(
+pub(in crate::options) fn create_session_script_content(
     command: &String,
     detach: &bool,
     n: &Option<String>,

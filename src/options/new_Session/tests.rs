@@ -1,6 +1,5 @@
-use crate::options::test_utils::test_utils::test_session_content;
-
 use super::*;
+use crate::options::test_utils::test_utils::create_session_test_content;
 use lib::{
     dir::create_dir,
     mocks::{TestObject, TestSessionDir, TestSessionDirGroupScript, TestTmuxHomeDir},
@@ -66,7 +65,7 @@ fn create_session_directory_success() -> CustomResult<()> {
 
 #[test]
 fn session_script_content_attach_test() -> CustomResult<()> {
-    let attach_test_session_content = test_session_content(
+    let attach_test_session_content = create_session_test_content(
         "~".to_owned(),
         false,
         None,
@@ -90,7 +89,7 @@ fn session_script_content_attach_test() -> CustomResult<()> {
 
 #[test]
 fn session_script_content_detach_test() -> CustomResult<()> {
-    let detach_test_session_content = test_session_content(
+    let detach_test_session_content = create_session_test_content(
         "~".to_owned(),
         true,
         None,
@@ -114,7 +113,7 @@ fn session_script_content_detach_test() -> CustomResult<()> {
 
 #[test]
 fn session_script_content_window_name_test() -> CustomResult<()> {
-    let detach_test_session_content = test_session_content(
+    let detach_test_session_content = create_session_test_content(
         "~".to_owned(),
         true,
         Some("window_name".to_owned()),
@@ -124,12 +123,12 @@ fn session_script_content_window_name_test() -> CustomResult<()> {
         None,
     )?;
 
-    let test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+    let ex_test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
         "resources/test/script_content_checks/\
             session/name_window_option_test_session.sh",
     );
 
-    let expected_test_session_content = fs::read_to_string(test_content)?;
+    let expected_test_session_content = fs::read_to_string(ex_test_content)?;
 
     assert_eq!(detach_test_session_content, expected_test_session_content);
 

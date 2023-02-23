@@ -7,10 +7,14 @@ pub(in crate::options) mod test_utils {
         produce_script_error,
     };
 
-    use crate::options::{new_session::session_script_content, Opts};
+    use crate::options::{
+        new_session::create_session_script_content, new_window::create_window_script_content, Opts,
+    };
 
-    /// Test helper function; returns test session script content
-    pub fn test_session_content(
+    /// Test helper function; returns test session script content.
+    ///
+    /// This function tests the `create_session_script_content` function.
+    pub fn create_session_test_content(
         command: String,
         detach: bool,
         name_window: Option<String>,
@@ -41,7 +45,7 @@ pub(in crate::options) mod test_utils {
             y,
         } = detach_test_session
         {
-            session_script_content(
+            create_session_script_content(
                 &command,
                 &detach,
                 &name_window,
@@ -55,5 +59,44 @@ pub(in crate::options) mod test_utils {
         };
 
         Ok(test_session_content)
+    }
+
+    /// Test helper function; returns test window script content
+    ///
+    /// This function tests the `create_window_script_content` function.
+    pub fn create_window_test_content(
+        a: bool,
+        kill: bool,
+        command: String,
+        detach: bool,
+        name_window: Option<String>,
+        target_window: Option<String>,
+    ) -> CustomResult<(String, String, String)> {
+        let error = "Window content related".to_owned();
+
+        let test_window = Opts::NewWindow {
+            a,
+            kill,
+            command,
+            detach,
+            name_window,
+            target_window,
+        };
+
+        let test_window_content = if let Opts::NewWindow {
+            a,
+            kill,
+            command,
+            detach,
+            name_window,
+            target_window,
+        } = test_window
+        {
+            create_window_script_content(&a, &kill, &command, &detach, &name_window, &target_window)
+        } else {
+            produce_script_error!(error);
+        }?;
+
+        Ok(test_window_content)
     }
 }
