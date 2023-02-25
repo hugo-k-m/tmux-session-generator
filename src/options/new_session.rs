@@ -73,7 +73,7 @@ pub(in crate::options) fn create_session_script_content(
         return content;
     } else {
         content.push_str("\n\n# Attach\n");
-        content.push_str(&format!("tmux attach -t ${}", SESSION_VAR));
+        content.push_str(&format!("tmux attach -t ${}\n", SESSION_VAR));
     };
 
     content

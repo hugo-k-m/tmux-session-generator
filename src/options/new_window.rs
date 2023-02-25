@@ -60,7 +60,7 @@ pub(in crate::options) fn create_window_script_content(
     content.push_str(&format!("tmux new-window -c {}", command));
 
     tmux_option!(
-        n t,
+        t n,
         content
     );
 
@@ -69,6 +69,10 @@ pub(in crate::options) fn create_window_script_content(
         d, content
         k, content
     );
+
+    // This is to account for editors such as vim that add a newline at the end
+    // of the file.
+    content.push_str(&format!("\n"));
 
     Ok((content, session_name.to_owned(), window_name.to_owned()))
 }
@@ -136,14 +140,16 @@ mod tests {
             false,
             "~".to_owned(),
             false,
-            Some("test_window".to_owned()),
-            Some("1".to_owned()),
-        );
+            Some("new_window".to_owned()),
+            Some("new_session:1".to_owned()),
+        )?;
 
         let ex_test_content = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("resources/examples/new_window/new_window.sh");
 
         let expected_test_session_content = fs::read_to_string(ex_test_content)?;
+
+        assert_eq!(test_window_content.0, expected_test_session_content);
 
         Ok(())
     }
